@@ -2,10 +2,15 @@ package com.news.util;
 
 /**
  * Created by Arsiono on 2015/12/20.11:35
- * 监听器 HTTPurlConnection  监听器自定义封装
+ * 监听器 HTTPurlConnection
  */
 public interface HttpListener {
 
+    /**
+     * @desc: 实例变量
+     * @author: Arison
+     * @create: 2015/12/21 0:09
+     */
     public static final int EVENT_BASE = 0x100;
 
     /**
