@@ -2,7 +2,7 @@ package com.news.util;
 
 /**
  * Created by Arsiono on 2015/12/20.11:35
- * 监听器
+ * 监听器 HTTPurlConnection
  */
 public interface HttpListener {
 
