@@ -32,8 +32,8 @@ public class HttpClientUtil {
      */
     public static Response sendGetHeaderRequest(String url,
                                                 Map<String, Object> params,
-                                                LinkedHashMap<String, Object> headers,
-                                                boolean sign) throws Exception {
+                                                LinkedHashMap<String, Object> headers
+                                                ) throws Exception {
         HttpClient httpClient = new DefaultHttpClient();
         HttpResponse response = null;
         try {
