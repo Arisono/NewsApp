@@ -24,6 +24,7 @@ import java.util.Set;
 /** http client
  * Created by Arsiono on 2015/12/21.
  */
+@Deprecated
 public class HttpClientUtil {
 
     /**
