@@ -155,7 +155,7 @@ public class NewsFragment extends Fragment{
                     DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
                     dividerLine.setSize(1);
                     dividerLine.setColor(0x00000000);
-                    dividerLine.setSpace(20);
+                    dividerLine.setSpace(10);
                     mlist.addItemDecoration(dividerLine);
                     mlist.setAdapter(adapter);
                 }
