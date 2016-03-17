@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.net;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.net;
 
 import android.content.Context;
 import android.util.Log;
@@ -18,7 +18,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 /**

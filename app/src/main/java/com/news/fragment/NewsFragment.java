@@ -1,6 +1,6 @@
 package com.news.fragment;
 
-import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -11,21 +11,27 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.news.util.R;
+import com.alibaba.fastjson.JSON;
+import com.news.app.Constants;
+import com.news.model.NewsChannelEntity;
+import com.news.net.HttpDataCallBack;
+import com.news.net.NetUtils;
+import com.news.net.R;
+import com.news.util.LogUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,42 +42,135 @@ import butterknife.ButterKnife;
  */
 public class NewsFragment extends Fragment{
 
+
+    private String TAG="NewsFragment";
     @Bind(R.id.mlist)
     public RecyclerView mlist;
-    //private NewsListAdapter adapter;
     private SimpleAdapter adapter;
     Toolbar mMainToolbar;
+    private String name;
+    private String channelId;
+    private Activity activity;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        LogUtils.i(TAG, name + "------onCreateView()---------");
         View view=inflater.inflate(R.layout.fragment_news,container,false);
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
+//        mlist= (RecyclerView) getActivity().findViewById(R.id.mlist);
+//        LogUtils.i(TAG, "mlist:"+mlist);
+//        mMainToolbar= (Toolbar) getActivity().findViewById(R.id.toolbar);
+        activity=getActivity();
 
-        initData();
-        mMainToolbar= (Toolbar) getActivity().findViewById(R.id.toolbar);
         return view;
     }
 
-   /**
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+       this.name= getArguments().getString("name");
+       this.channelId= getArguments().getString("channelId");
+        LogUtils.i(TAG, name + ":onCreate()");
+    }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser){
+            LogUtils.i(TAG, name + ":setUserVisibleHint()");
+            initData();
+        }
+    }
+
+  /*  @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+*/
+    @Override
+    public void onResume() {
+        super.onResume();
+        LogUtils.i(TAG, name + ":onResume()");
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LogUtils.i(TAG, name+":onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        LogUtils.i(TAG, name + ":onStop()");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LogUtils.i(TAG, name + ":onDestroy()");
+    }
+
+    /**
     * @desc:initdata
     * @author：Administrator on 2016/1/4 16:02
     */
    public void initData(){
-       List<String> data=new ArrayList<>();
-       for (int i=0;i<=22;i++){
-          data.add("数据"+i);
-       }
-       adapter=new SimpleAdapter(getActivity(),data);
-       mlist.setLayoutManager(new LinearLayoutManager(mlist.getContext()));
-       DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
-       dividerLine.setSize(1);
-       dividerLine.setColor(0x00000000);
-       dividerLine.setSpace(20);
-       mlist.addItemDecoration(dividerLine);
-       mlist.setAdapter(adapter);
-
+       loadData();
    }
+
+
+    public void loadData(){
+        String url=Constants.API_NEWS;
+        String datetime=new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        final Map<String,Object> param=new HashMap<>();
+        param.put("showapi_appid", "12041");
+        param.put("showapi_sign", "67f7892db890407f95cdf39f870b1234");
+        param.put("showapi_timestamp", datetime);
+        param.put("channelId", channelId);
+       // param.put("channelName", "国内最新");
+            NetUtils.httpResquest(activity, url, param, Constants.HTTP_GET, new HttpDataCallBack() {
+                @Override
+                public void onStart() {
+                    LogUtils.i(TAG,"开始加载数据："+name);
+                    //Log.i(TAG, "http start...");
+                }
+
+                @Override
+                public void processData(Object paramObject, boolean paramBoolean) {
+                    Log.i(TAG, "json:" + paramObject.toString());
+                    List<String> data=new ArrayList<>();
+                    for (int i=0;i<=22;i++){
+                        data.add("数据"+i);
+                    }
+                    adapter=new SimpleAdapter(getActivity(),data);
+                    LogUtils.i(TAG,"initdata() mlist:"+mlist);
+                    if (mlist==null)return;
+                    mlist.setLayoutManager(new LinearLayoutManager(mlist.getContext()));
+                    DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
+                    dividerLine.setSize(1);
+                    dividerLine.setColor(0x00000000);
+                    dividerLine.setSpace(20);
+                    mlist.addItemDecoration(dividerLine);
+                    mlist.setAdapter(adapter);
+                }
+
+                @Override
+                public void onFinish() {
+                    // Log.i(TAG, "http end...");
+                }
+
+                @Override
+                public void onFailed() {
+                    Log.i(TAG, "http onFail...");
+                }
+            });
+    }
 
     /**
      * @desc:RecyclerView adapter

@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.net;
 
 /**
  * Created by Arsiono on 2015/12/20.11:35
