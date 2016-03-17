@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.news.util.R;
+import com.news.net.R;
 
 public class LoginActivity extends AppCompatActivity {
 

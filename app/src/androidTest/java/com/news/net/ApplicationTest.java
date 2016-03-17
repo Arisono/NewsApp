@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.net;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
