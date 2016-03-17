@@ -92,7 +92,7 @@ public class IndexActivity extends AppCompatActivity {
         }
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-       // viewPager.setOffscreenPageLimit(5);//预加载
+        viewPager.setOffscreenPageLimit(channelList.size());//预加载
     }
 
     private void httpResquest(String url, Map<String, Object> param) {
