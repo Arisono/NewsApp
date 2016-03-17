@@ -6,8 +6,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,11 +18,10 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.news.app.Constants;
-import com.news.model.NewsChannelEntity;
 import com.news.net.HttpDataCallBack;
 import com.news.net.NetUtils;
 import com.news.net.R;
@@ -46,7 +47,13 @@ public class NewsFragment extends Fragment{
     private String TAG="NewsFragment";
     @Bind(R.id.mlist)
     public RecyclerView mlist;
+    @Bind(R.id.swipe_refresh_layout)
+    public  SwipeRefreshLayout swipe_refresh_layout;
     private SimpleAdapter adapter;
+    List<String> newData=new ArrayList<>();
+
+    int  lastVisibleItem;
+
     Toolbar mMainToolbar;
     private String name;
     private String channelId;
@@ -64,6 +71,7 @@ public class NewsFragment extends Fragment{
 //        mMainToolbar= (Toolbar) getActivity().findViewById(R.id.toolbar);
         activity=getActivity();
 
+        initView();
         return view;
     }
 
@@ -91,6 +99,39 @@ public class NewsFragment extends Fragment{
 
     }
 */
+
+    public void initView(){
+        swipe_refresh_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
+
+
+        mlist.addOnScrollListener(new RecyclerView.OnScrollListener(){
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE
+                        && lastVisibleItem + 1 == adapter.getItemCount()) {
+
+                          swipe_refresh_layout.setRefreshing(true);
+                          // 此处在现实项目中，请换成网络请求数据代码，sendRequest .....
+                          initData();
+
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                lastVisibleItem = ((LinearLayoutManager)mlist.getLayoutManager()).findLastVisibleItemPosition();
+            }
+        });
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();
@@ -145,19 +186,27 @@ public class NewsFragment extends Fragment{
                 public void processData(Object paramObject, boolean paramBoolean) {
                     Log.i(TAG, "json:" + paramObject.toString());
                     List<String> data=new ArrayList<>();
-                    for (int i=0;i<=22;i++){
+                    for (int i=0;i<=8;i++){
                         data.add("数据"+i);
                     }
-                    adapter=new SimpleAdapter(getActivity(),data);
-                    LogUtils.i(TAG,"initdata() mlist:"+mlist);
-                    if (mlist==null)return;
-                    mlist.setLayoutManager(new LinearLayoutManager(mlist.getContext()));
-                    DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
-                    dividerLine.setSize(1);
-                    dividerLine.setColor(0x00000000);
-                    dividerLine.setSpace(10);
-                    mlist.addItemDecoration(dividerLine);
-                    mlist.setAdapter(adapter);
+                    newData.addAll(data);
+                    if(adapter==null){
+                        adapter=new SimpleAdapter(getActivity(),newData);
+                        LogUtils.i(TAG,"initdata() mlist:"+mlist);
+                        if (mlist==null)return;
+                        mlist.setLayoutManager(new LinearLayoutManager(mlist.getContext()));
+                        DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
+                        dividerLine.setSize(1);
+                        dividerLine.setColor(0x00000000);
+                        dividerLine.setSpace(10);
+                        mlist.addItemDecoration(dividerLine);
+                        mlist.setAdapter(adapter);
+                    }else{
+                        adapter.notifyDataSetChanged();
+                    }
+
+
+                    swipe_refresh_layout.setRefreshing(false);
                 }
 
                 @Override

@@ -203,7 +203,12 @@ public class HttpRunnable implements  Runnable{
 
     @Override
     public void run() {
-      // boolean isHasNet=NetUtils.isNetworkConnected(context);
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // boolean isHasNet=NetUtils.isNetworkConnected(context);
         if(true){
             if(requestStatus== Constants.HTTP_GET){
                   httpGetRequest();
