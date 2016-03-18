@@ -66,11 +66,7 @@ public class NewsFragment extends Fragment{
         LogUtils.i(TAG, name + "------onCreateView()---------");
         View view=inflater.inflate(R.layout.fragment_news,container,false);
         ButterKnife.bind(this, view);
-//        mlist= (RecyclerView) getActivity().findViewById(R.id.mlist);
-//        LogUtils.i(TAG, "mlist:"+mlist);
-//        mMainToolbar= (Toolbar) getActivity().findViewById(R.id.toolbar);
         activity=getActivity();
-
         initView();
         return view;
     }
@@ -78,8 +74,8 @@ public class NewsFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       this.name= getArguments().getString("name");
-       this.channelId= getArguments().getString("channelId");
+        this.name= getArguments().getString("name");
+        this.channelId= getArguments().getString("channelId");
         LogUtils.i(TAG, name + ":onCreate()");
     }
 
@@ -93,14 +89,8 @@ public class NewsFragment extends Fragment{
         }
     }
 
-  /*  @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-    }
-*/
-
     public void initView(){
+        mlist.setLayoutManager(new LinearLayoutManager(mlist.getContext()));
         swipe_refresh_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -108,16 +98,14 @@ public class NewsFragment extends Fragment{
             }
         });
 
-
         mlist.addOnScrollListener(new RecyclerView.OnScrollListener(){
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                if(adapter==null)return;
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
                         && lastVisibleItem + 1 == adapter.getItemCount()) {
-
                           swipe_refresh_layout.setRefreshing(true);
-                          // 此处在现实项目中，请换成网络请求数据代码，sendRequest .....
                           initData();
 
                 }
@@ -136,6 +124,7 @@ public class NewsFragment extends Fragment{
     public void onResume() {
         super.onResume();
         LogUtils.i(TAG, name + ":onResume()");
+
     }
 
 
@@ -162,6 +151,9 @@ public class NewsFragment extends Fragment{
     * @author：Administrator on 2016/1/4 16:02
     */
    public void initData(){
+       if(swipe_refresh_layout!=null){
+           swipe_refresh_layout.setRefreshing(true);
+       }
        loadData();
    }
 
@@ -179,6 +171,7 @@ public class NewsFragment extends Fragment{
                 @Override
                 public void onStart() {
                     LogUtils.i(TAG,"开始加载数据："+name);
+
                     //Log.i(TAG, "http start...");
                 }
 
@@ -192,9 +185,9 @@ public class NewsFragment extends Fragment{
                     newData.addAll(data);
                     if(adapter==null){
                         adapter=new SimpleAdapter(getActivity(),newData);
-                        LogUtils.i(TAG,"initdata() mlist:"+mlist);
+                        LogUtils.i(TAG, "initdata() mlist:" + mlist);
                         if (mlist==null)return;
-                        mlist.setLayoutManager(new LinearLayoutManager(mlist.getContext()));
+
                         DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
                         dividerLine.setSize(1);
                         dividerLine.setColor(0x00000000);
