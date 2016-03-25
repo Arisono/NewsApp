@@ -1,4 +1,4 @@
-package com.news.fragment;
+package com.news.ui.fragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,12 +17,11 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.news.app.Constants;
-import com.news.net.HttpDataCallBack;
-import com.news.net.NetUtils;
+import com.news.util.net.HttpDataCallBack;
+import com.news.util.net.NetUtils;
 import com.news.net.R;
 import com.news.util.LogUtils;
 

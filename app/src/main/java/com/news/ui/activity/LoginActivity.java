@@ -1,4 +1,4 @@
-package com.news.ui.activty;
+package com.news.ui.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

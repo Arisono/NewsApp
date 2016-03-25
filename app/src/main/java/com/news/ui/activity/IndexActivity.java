@@ -1,4 +1,4 @@
-package com.news.ui.activty;
+package com.news.ui.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,11 +13,11 @@ import android.view.View;
 import com.alibaba.fastjson.JSON;
 import com.news.adapter.NewsFragmentAdapter;
 import com.news.app.Constants;
-import com.news.fragment.NewsFragment;
+import com.news.ui.fragment.NewsFragment;
 import com.news.model.NewsChannelEntity;
-import com.news.net.HttpClientUtil;
-import com.news.net.HttpDataCallBack;
-import com.news.net.NetUtils;
+import com.news.util.net.HttpClientUtil;
+import com.news.util.net.HttpDataCallBack;
+import com.news.util.net.NetUtils;
 import com.news.net.R;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
