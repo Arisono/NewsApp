@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.util.base;
 
 /**
  * Singleton helper class for lazily initialization.

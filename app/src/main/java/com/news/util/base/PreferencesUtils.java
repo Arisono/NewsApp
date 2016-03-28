@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.util.base;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 
 import java.util.Map;
 
-public class PreferencesUtilsUtils
+public class PreferencesUtils
 {
     /**
      * 保存在手机里面的文件名

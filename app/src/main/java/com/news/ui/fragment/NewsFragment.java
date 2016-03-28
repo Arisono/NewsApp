@@ -23,7 +23,7 @@ import com.news.app.Constants;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
 import com.news.net.R;
-import com.news.util.LogUtils;
+import com.news.util.base.LogUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

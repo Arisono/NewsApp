@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.util.base;
 
 /**
  * Created by Administrator on 2016/3/25.

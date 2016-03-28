@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.util.base;
 
 import android.app.Activity;
 import android.content.ComponentName;

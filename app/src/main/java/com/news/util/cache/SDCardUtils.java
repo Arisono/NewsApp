@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.util.cache;
 
 
 import android.os.Environment;

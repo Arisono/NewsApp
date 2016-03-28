@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.util.download;
 
 import java.lang.reflect.Method;
 

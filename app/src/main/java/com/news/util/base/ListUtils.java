@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.util.base;
 
 import java.util.ArrayList;
 import java.util.List;

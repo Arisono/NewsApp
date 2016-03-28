@@ -1,4 +1,4 @@
-package com.news.util;
+package com.news.util.base;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
