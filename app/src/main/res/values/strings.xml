@@ -3,4 +3,8 @@
     <string name="title_activity_index">新闻中心</string>
     <string name="appbar_scrolling_view_behavior">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
     <string name="title_activity_login">LoginActivity</string>
+
+    <string name="news_title">新闻标题</string>
+    <string name="news_time_create">1小时前</string>
+    <string name="news_source">星座网</string>
 </resources>
