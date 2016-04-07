@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -103,26 +104,40 @@ public class NewsFragment extends Fragment{
         swipe_refresh_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                contentlists.clear();//下拉刷新，清空列表
+               // adapter.notifyDataSetChanged(); //clear this is create a bug for
+                //或者禁止滑動
                 loadData(1);
             }
         });
 
-        mlist.addOnScrollListener(new RecyclerView.OnScrollListener(){
+        mlist.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if(adapter==null)return;
+                if (adapter == null) return;
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
                         && lastVisibleItem + 1 == adapter.getItemCount()) {
-                          swipe_refresh_layout.setRefreshing(true);
-                          initData(++page);
+                    swipe_refresh_layout.setRefreshing(true);
+                    initData(++page);
                 }
             }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                lastVisibleItem = ((LinearLayoutManager)mlist.getLayoutManager()).findLastVisibleItemPosition();
+                lastVisibleItem = ((LinearLayoutManager) mlist.getLayoutManager()).findLastVisibleItemPosition();
+            }
+        });
+
+        mlist.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (swipe_refresh_layout.isRefreshing()) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         });
     }
@@ -187,8 +202,8 @@ public class NewsFragment extends Fragment{
                 public void processData(Object paramObject, boolean paramBoolean) {
                     Log.i(TAG, "json:" + paramObject.toString());
                     NewsListEntity mNext= JSON.parseObject(paramObject.toString(), NewsListEntity.class);
-                    contentlists.addAll(mNext.getShowapi_res_body().getPagebean().getContentlist());
                     if(adapter==null){
+                        contentlists=mNext.getShowapi_res_body().getPagebean().getContentlist();
                         adapter=new SimpleAdapter(getActivity(), contentlists);
                         LogUtils.i(TAG, "initdata() mlist:" + mlist);
                         if (mlist==null)return;
@@ -199,6 +214,7 @@ public class NewsFragment extends Fragment{
                         mlist.addItemDecoration(dividerLine);
                         mlist.setAdapter(adapter);
                     }else{
+                        contentlists.addAll(mNext.getShowapi_res_body().getPagebean().getContentlist());
                         adapter.notifyDataSetChanged();
                     }
                     swipe_refresh_layout.setRefreshing(false);
@@ -266,8 +282,22 @@ public class NewsFragment extends Fragment{
                 holder.ll_image_third.setVisibility(View.VISIBLE);
                 holder.ll_image_one.setVisibility(View.GONE);
                 holder.iv_news_leftimage.setVisibility(View.GONE);
+            }else if (size==2){
+                ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
+                displayOption.loadingResId = R.mipmap.img_default;
+                displayOption.loadErrorResId = R.mipmap.img_error;
+                mImageLoaderWrapper.displayImage(holder.iv_news_bigimage, contentlists.get(position).getImageurls().get(0).getUrl(), displayOption);
+                holder.ll_image_third.setVisibility(View.GONE);
+                holder.ll_image_one.setVisibility(View.VISIBLE);
+                holder.iv_news_leftimage.setVisibility(View.GONE);
+            }else{
+                //清空图片
+                holder.ll_image_third.setVisibility(View.GONE);
+                holder.ll_image_one.setVisibility(View.GONE);
+                holder.iv_news_leftimage.setVisibility(View.GONE);
             }
 
+            holder.tv_news_imageNum.setText("("+size+")");
 
             //设置背景
             holder.mView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
@@ -290,6 +320,7 @@ public class NewsFragment extends Fragment{
             public final TextView tv_news_desc;
             public final TextView tv_news_time;
             public final TextView tv_news_source;
+            public final TextView tv_news_imageNum;
             //third image
             public final ImageView iv_news_oneimage;
             public final ImageView iv_news_twoimage;
@@ -300,6 +331,7 @@ public class NewsFragment extends Fragment{
             public final LinearLayout ll_image_third;
             public final LinearLayout ll_image_one;
 
+
             public ViewHolder(View itemView) {
                 super(itemView);
                 mView=itemView;
@@ -307,6 +339,7 @@ public class NewsFragment extends Fragment{
                 tv_news_desc= (TextView) itemView.findViewById(R.id.tv_news_desc);
                 tv_news_time= (TextView) itemView.findViewById(R.id.tv_news_time);
                 tv_news_source= (TextView) itemView.findViewById(R.id.tv_news_source);
+                tv_news_imageNum= (TextView) itemView.findViewById(R.id.tv_news_imageNum);
 
                 iv_news_bigimage= (ImageView) itemView.findViewById(R.id.iv_big_one);
                 iv_news_leftimage= (ImageView) itemView.findViewById(R.id.iv_left_image);

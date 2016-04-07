@@ -35,6 +35,7 @@
                         android:text="@string/news_title"
                         android:layout_gravity="top"
                         android:layout_marginTop="5dp"
+                        android:textColor="@color/cardview_dark_background"
                         android:textSize="14sp"
                         android:layout_marginLeft="5dp" />
                     <TextView
@@ -58,7 +59,7 @@
                              android:scaleType="fitXY"
                              android:id="@+id/iv_third_one"
                              android:layout_width="0dp"
-                             android:layout_height="80dp"
+                             android:layout_height="100dp"
                              android:layout_weight="1"
                              android:background="@mipmap/icon_news_case1"
                              android:layout_margin="5dp" />
@@ -66,7 +67,7 @@
                             android:scaleType="fitXY"
                             android:id="@+id/iv_third_two"
                             android:layout_width="0dp"
-                            android:layout_height="80dp"
+                            android:layout_height="100dp"
                             android:layout_weight="1"
                             android:background="@mipmap/icon_news_case1"
                             android:layout_margin="5dp" />
@@ -74,7 +75,7 @@
                             android:scaleType="fitXY"
                             android:id="@+id/iv_third_third"
                             android:layout_width="0dp"
-                            android:layout_height="80dp"
+                            android:layout_height="100dp"
                             android:layout_weight="1"
                             android:background="@mipmap/icon_news_case1"
                             android:layout_margin="5dp" />
@@ -90,7 +91,7 @@
                             android:scaleType="fitXY"
                             android:id="@+id/iv_big_one"
                             android:layout_width="0dp"
-                            android:layout_height="160dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:background="@mipmap/icon_news_case1"
                             android:layout_margin="5dp" />
@@ -116,6 +117,14 @@
                             android:text="@string/news_source"
                             android:layout_marginLeft="10dp"
                             android:textSize="10sp" />
+
+                        <TextView
+                            android:id="@+id/tv_news_imageNum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:textSize="10sp"
+                            android:textColor="#cc0c8c32" />
                     </LinearLayout>
                 </LinearLayout>
 
