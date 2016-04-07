@@ -105,6 +105,7 @@
     <orderEntry type="library" exported="" name="ormlite-core-4.48" level="project" />
     <orderEntry type="library" exported="" name="butterknife-7.0.1" level="project" />
     <orderEntry type="library" exported="" name="nineoldandroids-2.4.0" level="project" />
+    <orderEntry type="library" exported="" name="universal-image-loader-1.9.5" level="project" />
     <orderEntry type="library" exported="" name="fastjson-1.2.7" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-23.1.1" level="project" />
   </component>

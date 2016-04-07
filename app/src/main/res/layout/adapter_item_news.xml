@@ -5,26 +5,29 @@
     android:layout_height="match_parent">
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
+        android:layout_height="wrap_content"
+        >
+      <!--  <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical">-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <!--左边图片-->
                 <ImageView
+                    android:scaleType="fitXY"
+                    android:id="@+id/iv_left_image"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:background="@mipmap/icon_news_case1"
+                    android:background="@mipmap/img_default"
                     android:layout_margin="10dp" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_margin="10dp">
+                    android:layout_margin="5dp">
                     <TextView
                         android:id="@+id/tv_news_title"
                         android:layout_width="match_parent"
@@ -32,36 +35,93 @@
                         android:text="@string/news_title"
                         android:layout_gravity="top"
                         android:layout_marginTop="5dp"
-                        android:textSize="16sp" />
-                    <!--多图情况-->
-                    <LinearLayout
+                        android:textSize="14sp"
+                        android:layout_marginLeft="5dp" />
+                    <TextView
+                        android:id="@+id/tv_news_desc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:text="@string/news_desc"
+                        android:layout_gravity="top"
+                        android:layout_marginTop="5dp"
+                        android:textSize="12sp"
+                        android:layout_marginLeft="5dp" />
+                    <!--多图情况-->
+                    <LinearLayout
+                        android:id="@+id/ll_image_third"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:orientation="horizontal">
-
+                        <!--暂时设定图片为三张-->
+                         <ImageView
+                             android:scaleType="fitXY"
+                             android:id="@+id/iv_third_one"
+                             android:layout_width="0dp"
+                             android:layout_height="80dp"
+                             android:layout_weight="1"
+                             android:background="@mipmap/icon_news_case1"
+                             android:layout_margin="5dp" />
+                        <ImageView
+                            android:scaleType="fitXY"
+                            android:id="@+id/iv_third_two"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:background="@mipmap/icon_news_case1"
+                            android:layout_margin="5dp" />
+                        <ImageView
+                            android:scaleType="fitXY"
+                            android:id="@+id/iv_third_third"
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_weight="1"
+                            android:background="@mipmap/icon_news_case1"
+                            android:layout_margin="5dp" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/ll_image_one"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:orientation="horizontal">
+                        <!--暂时设定图片为一张-->
+                        <ImageView
+                            android:scaleType="fitXY"
+                            android:id="@+id/iv_big_one"
+                            android:layout_width="0dp"
+                            android:layout_height="160dp"
+                            android:layout_weight="1"
+                            android:background="@mipmap/icon_news_case1"
+                            android:layout_margin="5dp" />
                     </LinearLayout>
                     <!--发布时间，来源-->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp">
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="5dp">
                          <TextView
+                             android:id="@+id/tv_news_time"
                              android:layout_width="wrap_content"
                              android:layout_height="wrap_content"
-                             android:text="@string/news_time_create"/>
+                             android:text="@string/news_time_create"
+                             android:textSize="10sp" />
                         <TextView
+                            android:id="@+id/tv_news_source"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/news_source"
-                            android:layout_marginLeft="10dp" />
+                            android:layout_marginLeft="10dp"
+                            android:textSize="10sp" />
                     </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 <!--    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

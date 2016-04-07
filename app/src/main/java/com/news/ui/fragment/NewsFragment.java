@@ -17,13 +17,20 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.news.app.Constants;
+import com.news.model.NewsListEntity;
+import com.news.util.imageloader.ImageLoaderFactory;
+import com.news.util.imageloader.ImageLoaderWrapper;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
 import com.news.net.R;
 import com.news.util.base.LogUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,22 +48,23 @@ import butterknife.ButterKnife;
  */
 public class NewsFragment extends Fragment{
 
-
     private String TAG="NewsFragment";
     @Bind(R.id.mlist)
     public RecyclerView mlist;
     @Bind(R.id.swipe_refresh_layout)
     public  SwipeRefreshLayout swipe_refresh_layout;
     private SimpleAdapter adapter;
-    List<String> newData=new ArrayList<>();
+    public int page=1;
+    private List<NewsListEntity.NewsListBody.Pagebean.Contentlist> contentlists=new ArrayList<>();
 
-    int  lastVisibleItem;
-
-    Toolbar mMainToolbar;
+    private int lastVisibleItem;
+    private Toolbar mMainToolbar;
     private String name;
     private String channelId;
     private Activity activity;
+    private boolean isFirstLoad=true;
 
+    private ImageLoaderWrapper mImageLoaderWrapper;
 
     @Nullable
     @Override
@@ -81,18 +89,21 @@ public class NewsFragment extends Fragment{
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser){
+        if (isVisibleToUser) {
             LogUtils.i(TAG, name + ":setUserVisibleHint()");
-            initData();
+            if (isFirstLoad){
+               initData(page);
+             }
         }
     }
 
     public void initView(){
+        mImageLoaderWrapper= ImageLoaderFactory.getLoader();
         mlist.setLayoutManager(new LinearLayoutManager(mlist.getContext()));
         swipe_refresh_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadData();
+                loadData(1);
             }
         });
 
@@ -104,8 +115,7 @@ public class NewsFragment extends Fragment{
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
                         && lastVisibleItem + 1 == adapter.getItemCount()) {
                           swipe_refresh_layout.setRefreshing(true);
-                          initData();
-
+                          initData(++page);
                 }
             }
 
@@ -148,15 +158,15 @@ public class NewsFragment extends Fragment{
     * @desc:initdata
     * @author：Administrator on 2016/1/4 16:02
     */
-   public void initData(){
+   public void initData(int count){
        if(swipe_refresh_layout!=null){
            swipe_refresh_layout.setRefreshing(true);
        }
-       loadData();
+       loadData(count);
    }
 
 
-    public void loadData(){
+    public void  loadData(int count){
         String url=Constants.API_NEWS;
         String datetime=new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         final Map<String,Object> param=new HashMap<>();
@@ -164,28 +174,24 @@ public class NewsFragment extends Fragment{
         param.put("showapi_sign", "67f7892db890407f95cdf39f870b1234");
         param.put("showapi_timestamp", datetime);
         param.put("channelId", channelId);
-       // param.put("channelName", "国内最新");
+        param.put("page",count);
+        //param.put("channelName", "国内最新");
             NetUtils.httpResquest(activity, url, param, Constants.HTTP_GET, new HttpDataCallBack() {
                 @Override
                 public void onStart() {
                     LogUtils.i(TAG,"开始加载数据："+name);
-
                     //Log.i(TAG, "http start...");
                 }
 
                 @Override
                 public void processData(Object paramObject, boolean paramBoolean) {
                     Log.i(TAG, "json:" + paramObject.toString());
-                    List<String> data=new ArrayList<>();
-                    for (int i=0;i<=8;i++){
-                        data.add("数据"+i);
-                    }
-                    newData.addAll(data);
+                    NewsListEntity mNext= JSON.parseObject(paramObject.toString(), NewsListEntity.class);
+                    contentlists.addAll(mNext.getShowapi_res_body().getPagebean().getContentlist());
                     if(adapter==null){
-                        adapter=new SimpleAdapter(getActivity(),newData);
+                        adapter=new SimpleAdapter(getActivity(), contentlists);
                         LogUtils.i(TAG, "initdata() mlist:" + mlist);
                         if (mlist==null)return;
-
                         DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
                         dividerLine.setSize(1);
                         dividerLine.setColor(0x00000000);
@@ -195,14 +201,13 @@ public class NewsFragment extends Fragment{
                     }else{
                         adapter.notifyDataSetChanged();
                     }
-
-
                     swipe_refresh_layout.setRefreshing(false);
                 }
 
                 @Override
                 public void onFinish() {
                     // Log.i(TAG, "http end...");
+                    isFirstLoad=false;
                 }
 
                 @Override
@@ -218,14 +223,15 @@ public class NewsFragment extends Fragment{
      */
     public class SimpleAdapter extends  RecyclerView.Adapter<SimpleAdapter.ViewHolder>{
 
-        private List<String> mValues;
+        List<NewsListEntity.NewsListBody.Pagebean.Contentlist> contentlists;
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
 
-        SimpleAdapter(Context context,List<String> items){
+        SimpleAdapter(Context context,
+                      List<NewsListEntity.NewsListBody.Pagebean.Contentlist> items){
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
-            this.mValues=items;
+            this.contentlists=items;
         }
 
         @Override
@@ -237,7 +243,32 @@ public class NewsFragment extends Fragment{
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.mTextView.setText(mValues.get(position));
+            holder.tv_news_title.setText(contentlists.get(position).getTitle());
+            holder.tv_news_source.setText(contentlists.get(position).getSource());
+            holder.tv_news_time.setText(contentlists.get(position).getPubDate());
+            holder.tv_news_desc.setText(contentlists.get(position).getDesc());
+            int size=contentlists.get(position).getImageurls().size();
+            if (size==1){
+                ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
+                displayOption.loadingResId = R.mipmap.img_default;
+                displayOption.loadErrorResId = R.mipmap.img_error;
+                mImageLoaderWrapper.displayImage(holder.iv_news_bigimage, contentlists.get(position).getImageurls().get(0).getUrl(), displayOption);
+                holder.ll_image_third.setVisibility(View.GONE);
+                holder.ll_image_one.setVisibility(View.VISIBLE);
+                holder.iv_news_leftimage.setVisibility(View.GONE);
+            }else if(size==3){
+                ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
+                displayOption.loadingResId = R.mipmap.img_default;
+                displayOption.loadErrorResId = R.mipmap.img_error;
+                mImageLoaderWrapper.displayImage(holder.iv_news_oneimage, contentlists.get(position).getImageurls().get(0).getUrl(), displayOption);
+                mImageLoaderWrapper.displayImage(holder.iv_news_twoimage, contentlists.get(position).getImageurls().get(1).getUrl(), displayOption);
+                mImageLoaderWrapper.displayImage(holder.iv_news_thirdimage, contentlists.get(position).getImageurls().get(2).getUrl(), displayOption);
+                holder.ll_image_third.setVisibility(View.VISIBLE);
+                holder.ll_image_one.setVisibility(View.GONE);
+                holder.iv_news_leftimage.setVisibility(View.GONE);
+            }
+
+
             //设置背景
             holder.mView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
             holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -250,16 +281,41 @@ public class NewsFragment extends Fragment{
 
         @Override
         public int getItemCount() {
-            return mValues.size();
+            return contentlists==null?0:contentlists.size();
         }
 
         public class ViewHolder extends  RecyclerView.ViewHolder {
             public final View mView;
-            public final TextView mTextView;
+            public final TextView tv_news_title;
+            public final TextView tv_news_desc;
+            public final TextView tv_news_time;
+            public final TextView tv_news_source;
+            //third image
+            public final ImageView iv_news_oneimage;
+            public final ImageView iv_news_twoimage;
+            public final ImageView iv_news_thirdimage;
+            public final ImageView iv_news_bigimage;
+            public final ImageView iv_news_leftimage;
+
+            public final LinearLayout ll_image_third;
+            public final LinearLayout ll_image_one;
+
             public ViewHolder(View itemView) {
                 super(itemView);
                 mView=itemView;
-                mTextView= (TextView) itemView.findViewById(R.id.tv_news_title);
+                tv_news_title= (TextView) itemView.findViewById(R.id.tv_news_title);
+                tv_news_desc= (TextView) itemView.findViewById(R.id.tv_news_desc);
+                tv_news_time= (TextView) itemView.findViewById(R.id.tv_news_time);
+                tv_news_source= (TextView) itemView.findViewById(R.id.tv_news_source);
+
+                iv_news_bigimage= (ImageView) itemView.findViewById(R.id.iv_big_one);
+                iv_news_leftimage= (ImageView) itemView.findViewById(R.id.iv_left_image);
+                iv_news_oneimage= (ImageView) itemView.findViewById(R.id.iv_third_one);
+                iv_news_twoimage= (ImageView) itemView.findViewById(R.id.iv_third_two);
+                iv_news_thirdimage= (ImageView) itemView.findViewById(R.id.iv_third_third);
+
+                ll_image_third= (LinearLayout) itemView.findViewById(R.id.ll_image_third);
+                ll_image_one= (LinearLayout) itemView.findViewById(R.id.ll_image_one);
             }
         }
     }
