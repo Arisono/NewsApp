@@ -2,6 +2,7 @@ package com.news.ui.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -25,6 +26,9 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.news.app.Constants;
 import com.news.model.NewsListEntity;
+import com.news.service.interfac.OnItemClickListener;
+import com.news.service.interfac.OnItemLongClickListener;
+import com.news.ui.activity.BaseWebActivity;
 import com.news.util.imageloader.ImageLoaderFactory;
 import com.news.util.imageloader.ImageLoaderWrapper;
 import com.news.util.net.HttpDataCallBack;
@@ -105,7 +109,7 @@ public class NewsFragment extends Fragment{
             @Override
             public void onRefresh() {
                 contentlists.clear();//下拉刷新，清空列表
-               // adapter.notifyDataSetChanged(); //clear this is create a bug for
+                // adapter.notifyDataSetChanged(); //clear this is create a bug for
                 //或者禁止滑動
                 loadData(1);
             }
@@ -140,6 +144,10 @@ public class NewsFragment extends Fragment{
                 }
             }
         });
+
+
+
+
     }
 
 
@@ -205,6 +213,18 @@ public class NewsFragment extends Fragment{
                     if(adapter==null){
                         contentlists=mNext.getShowapi_res_body().getPagebean().getContentlist();
                         adapter=new SimpleAdapter(getActivity(), contentlists);
+                        adapter.setOnItemClickListener(new OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, Object object) {
+                                Log.i(TAG,"点击事件：");
+                                NewsListEntity.NewsListBody.Pagebean.Contentlist data= (NewsListEntity.NewsListBody.Pagebean.Contentlist)object;
+                                Intent intent =new Intent(activity, BaseWebActivity.class);
+                                intent.putExtra("url",data.getLink());
+                                intent.putExtra("title",data.getTitle());
+                                activity.startActivity(intent);
+                                Log.i(TAG,"标题："+ data.getTitle());
+                            }
+                        });
                         LogUtils.i(TAG, "initdata() mlist:" + mlist);
                         if (mlist==null)return;
                         DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
@@ -237,11 +257,14 @@ public class NewsFragment extends Fragment{
      * @desc:RecyclerView adapter
      * @author：Administrator on 2016/1/5 15:30
      */
-    public class SimpleAdapter extends  RecyclerView.Adapter<SimpleAdapter.ViewHolder>{
+    public class SimpleAdapter extends  RecyclerView.Adapter<SimpleAdapter.ViewHolder> implements View.OnClickListener,View.OnLongClickListener {
 
         List<NewsListEntity.NewsListBody.Pagebean.Contentlist> contentlists;
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
+
+        private OnItemClickListener onItemClickListener;
+        private OnItemLongClickListener onItemLongClickListener;
 
         SimpleAdapter(Context context,
                       List<NewsListEntity.NewsListBody.Pagebean.Contentlist> items){
@@ -297,21 +320,45 @@ public class NewsFragment extends Fragment{
                 holder.iv_news_leftimage.setVisibility(View.GONE);
             }
 
-            holder.tv_news_imageNum.setText("("+size+")");
+            holder.tv_news_imageNum.setText("(" + size + ")");
 
             //设置背景
             holder.mView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            holder.mView.setOnClickListener(this);
 
-                }
-            });
+
+            holder.itemView.setTag(contentlists.get(position));
         }
 
         @Override
         public int getItemCount() {
             return contentlists==null?0:contentlists.size();
+        }
+
+        @Override
+        public void onClick(View v) {
+            Log.i(TAG,"适配器点击调用"+onItemClickListener);
+           if (onItemClickListener!=null){
+               onItemClickListener.onItemClick(v,v.getTag());
+           }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return super.getItemId(position);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            return false;
+        }
+
+        public void setOnItemClickListener(OnItemClickListener listener){
+            this.onItemClickListener=listener;
+        }
+
+        public void setOnItemLongClickListener(OnItemLongClickListener listener){
+           this.onItemLongClickListener=listener;
         }
 
         public class ViewHolder extends  RecyclerView.ViewHolder {
@@ -354,8 +401,10 @@ public class NewsFragment extends Fragment{
     }
 
 
-    public class DividerLine extends RecyclerView.ItemDecoration{
 
+
+
+    public class DividerLine extends RecyclerView.ItemDecoration{
         /**
          * 水平方向
          */
