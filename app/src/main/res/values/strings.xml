@@ -8,4 +8,10 @@
     <string name="news_desc">称中国建设人工岛导致紧张局势加剧的南海“是公海，不是领海”，并表示“欢迎”，并“强烈期待”海上...</string>
     <string name="news_time_create">1小时前</string>
     <string name="news_source">星座网</string>
+
+
+    <!--menu-->
+    <string name="menu_find">查找</string>
+    <string name="menu_share">分享</string>
+    <string name="menu_refresh">刷新</string>
 </resources>
