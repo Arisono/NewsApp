@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.news.ui.activity.IndexActivity">
+
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,6 +45,8 @@
             android:layout_margin="@dimen/fab_margin"
             android:src="@android:drawable/ic_dialog_email" />
     </android.support.design.widget.CoordinatorLayout>
+
+
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_left"
         android:layout_width="wrap_content"

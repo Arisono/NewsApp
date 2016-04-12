@@ -9,15 +9,18 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +34,8 @@ import com.news.model.NewsListEntity;
 import com.news.service.interfac.OnItemClickListener;
 import com.news.service.interfac.OnItemLongClickListener;
 import com.news.ui.activity.BaseWebActivity;
+import com.news.util.base.StringUtils;
+import com.news.util.base.ToastUtils;
 import com.news.util.imageloader.ImageLoaderFactory;
 import com.news.util.imageloader.ImageLoaderWrapper;
 import com.news.util.net.HttpDataCallBack;
@@ -71,6 +76,7 @@ public class NewsFragment extends Fragment{
     private Activity activity;
     private boolean isFirstLoad=true;
 
+    public SearchView mSearchView;
     private ImageLoaderWrapper mImageLoaderWrapper;
 
     @Nullable
@@ -90,8 +96,34 @@ public class NewsFragment extends Fragment{
         this.name= getArguments().getString("name");
         this.channelId= getArguments().getString("channelId");
         LogUtils.i(TAG, name + ":onCreate()");
+        setHasOptionsMenu(true);
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_news, menu);
+        final MenuItem item = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(item);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (StringUtils.isEmpty(newText)) {
+                    //tabLayout.setVisibility(View.VISIBLE);
+                } else {
+                    //tabLayout.setVisibility(View.INVISIBLE);
+                    ToastUtils.show(getActivity(), newText, 2000);
+                }
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {

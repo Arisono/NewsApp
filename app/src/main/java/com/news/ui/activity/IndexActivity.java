@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.alibaba.fastjson.JSON;
@@ -16,6 +19,8 @@ import com.news.adapter.NewsFragmentAdapter;
 import com.news.app.Constants;
 import com.news.ui.fragment.NewsFragment;
 import com.news.model.NewsChannelEntity;
+import com.news.util.base.StringUtils;
+import com.news.util.base.ToastUtils;
 import com.news.util.net.HttpClientUtil;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
@@ -42,13 +47,23 @@ public class IndexActivity extends AppCompatActivity {
     public Toolbar toolbar;
     @Bind(R.id.fab)
     public FloatingActionButton fab;
+
+    public SearchView mSearchView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_index);
         ButterKnife.bind(this);
+        initView();
+        initData();
+    }
 
-
+    /**
+     * @desc:initView
+     * @author：Administrator on 2016/4/12 11:38
+     */
+    public void initView(){
         toolbar.setNavigationIcon(getResources().getDrawable(R.mipmap.icon_left_menu));
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("新闻");
@@ -63,7 +78,8 @@ public class IndexActivity extends AppCompatActivity {
             }
         });
 
-        initData();
+
+
     }
 
     /**
@@ -83,11 +99,30 @@ public class IndexActivity extends AppCompatActivity {
 
     }
 
-    @Override
+  /*  @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_news,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+        final MenuItem item = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(item);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(StringUtils.isEmpty(newText)){
+                    tabLayout.setVisibility(View.VISIBLE);
+                }else{
+                    tabLayout.setVisibility(View.INVISIBLE);
+                    ToastUtils.show(IndexActivity.this,newText,2000);
+                }
+                return true;
+            }
+        });
+        return true;
+    }*/
 
     private void setupViewPager(ViewPager viewPager,List<NewsChannelEntity.ChannelEntity.ChannelList> channelList) {
         NewsFragmentAdapter adapter = new NewsFragmentAdapter(getSupportFragmentManager());
