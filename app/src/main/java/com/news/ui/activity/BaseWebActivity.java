@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -42,14 +43,23 @@ public class BaseWebActivity extends AppCompatActivity {
      * @author：Administrator on 2016/4/8 17:50
      */
     public void initView() {
+        setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.mipmap.icon_back);//设置导航栏图标
+        toolbar.setTitleTextColor(getResources().getColor(R.color.whitesmoke));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         toolbar.setSubtitleTextColor(getResources().getColor(R.color.whitesmoke));
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case android.R.id.home:
-                        finish();
+
                         break;
                     default:
                         break;
@@ -63,7 +73,9 @@ public class BaseWebActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String url = intent.getStringExtra("url");
         String title=intent.getStringExtra("title");
-        toolbar.setSubtitle(title == null ? "知晓新闻" : title);//设置子标题
+//        toolbar.setTitle(title == null ? "知晓新闻" : title);//设置子标题
+        getSupportActionBar().setTitle(title == null ? "知晓新闻" : title);
+
         if(url!=null){
             mWebView.setWebViewClient(new WebViewClient() {
                 public boolean shouldOverrideUrlLoading(WebView view, String url) {
