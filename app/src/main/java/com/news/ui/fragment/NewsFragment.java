@@ -42,6 +42,10 @@ import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
 import com.news.net.R;
 import com.news.util.base.LogUtils;
+import com.news.widget.recyclerView.EndlessRecyclerOnScrollListener;
+import com.news.widget.recyclerView.HeaderAndFooterRecyclerViewAdapter;
+import com.news.widget.recyclerView.footer.LoadingFooter;
+import com.news.widget.recyclerView.footer.RecyclerViewStateUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.text.SimpleDateFormat;
@@ -65,7 +69,10 @@ public class NewsFragment extends Fragment{
     public RecyclerView mlist;
     @Bind(R.id.swipe_refresh_layout)
     public  SwipeRefreshLayout swipe_refresh_layout;
+
     private SimpleAdapter adapter;
+    private HeaderAndFooterRecyclerViewAdapter mHeaderAndFooterRecyclerViewAdapter = null;
+
     public int page=1;
     private List<NewsListEntity.NewsListBody.Pagebean.Contentlist> contentlists=new ArrayList<>();
 
@@ -149,7 +156,9 @@ public class NewsFragment extends Fragment{
             }
         });
 
-        mlist.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+        mlist.addOnScrollListener(mOnScrollListener);
+        /*mlist.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -166,7 +175,7 @@ public class NewsFragment extends Fragment{
                 super.onScrolled(recyclerView, dx, dy);
                 lastVisibleItem = ((LinearLayoutManager) mlist.getLayoutManager()).findLastVisibleItemPosition();
             }
-        });
+        });*/
 
         mlist.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -241,6 +250,7 @@ public class NewsFragment extends Fragment{
                 @Override
                 public void processData(Object paramObject, boolean paramBoolean) {
                     Log.i(TAG, "json:" + paramObject.toString());
+                    RecyclerViewStateUtils.setFooterViewState(mlist, LoadingFooter.State.Normal);
                     NewsListEntity mNext= JSON.parseObject(paramObject.toString(), NewsListEntity.class);
                     if(adapter==null){
                         contentlists=mNext.getShowapi_res_body().getPagebean().getContentlist();
@@ -264,9 +274,15 @@ public class NewsFragment extends Fragment{
                         dividerLine.setColor(0x00000000);
                         dividerLine.setSpace(10);
                         mlist.addItemDecoration(dividerLine);
-                        mlist.setAdapter(adapter);
+                        mHeaderAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
+                        mlist.setAdapter(mHeaderAndFooterRecyclerViewAdapter);
                     }else{
-                        contentlists.addAll(mNext.getShowapi_res_body().getPagebean().getContentlist());
+                        if (mNext.getShowapi_res_body().getPagebean().getContentlist().size()>0) {
+                            contentlists.addAll(mNext.getShowapi_res_body().getPagebean().getContentlist());
+                        }else{
+                            RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20, LoadingFooter.State.TheEnd, null);
+                            --page;
+                        }
                         adapter.notifyDataSetChanged();
                     }
                     swipe_refresh_layout.setRefreshing(false);
@@ -285,6 +301,29 @@ public class NewsFragment extends Fragment{
             });
     }
 
+
+
+    private EndlessRecyclerOnScrollListener mOnScrollListener = new EndlessRecyclerOnScrollListener() {
+
+        @Override
+        public void onLoadNextPage(View view) {
+            super.onLoadNextPage(view);
+            LoadingFooter.State state = RecyclerViewStateUtils.getFooterViewState(mlist);
+            if(state == LoadingFooter.State.Loading) {
+                Log.d("@Cundong", "the state is Loading, just wait..");
+                return;
+            }
+
+//            if (page <10) {
+//                // loading more
+                RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20, LoadingFooter.State.Loading, null);
+                loadData(++page);
+//            } else {
+//                //the end
+//                RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20, LoadingFooter.State.TheEnd, null);
+//            }
+        }
+    };
     /**
      * @desc:RecyclerView adapter
      * @author：Administrator on 2016/1/5 15:30
