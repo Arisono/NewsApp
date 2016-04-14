@@ -25,7 +25,7 @@ public class RecyclerViewStateUtils {
      * @param state         FooterView State
      * @param errorListener FooterView处于Error状态时的点击事件
      */
-    public static void setFooterViewState(Activity instance, RecyclerView recyclerView, int pageSize, LoadingFooter.State state, View.OnClickListener errorListener) {
+    public static void setFooterViewState(Activity instance, RecyclerView recyclerView, int pageSize, int currpage,LoadingFooter.State state, View.OnClickListener errorListener) {
 
         if(instance==null || instance.isFinishing()) {
             return;
@@ -49,7 +49,7 @@ public class RecyclerViewStateUtils {
         //已经有footerView了
         if (headerAndFooterAdapter.getFooterViewsCount() > 0) {
             footerView = (LoadingFooter) headerAndFooterAdapter.getFooterView();
-            footerView.setState(state);
+            footerView.setState(state,currpage);
 
             if (state == LoadingFooter.State.NetWorkError) {
                 footerView.setOnClickListener(errorListener);
@@ -57,7 +57,7 @@ public class RecyclerViewStateUtils {
             recyclerView.scrollToPosition(headerAndFooterAdapter.getItemCount() - 1);
         } else {
             footerView = new LoadingFooter(instance);
-            footerView.setState(state);
+            footerView.setState(state,currpage);
 
             if (state == LoadingFooter.State.NetWorkError) {
                 footerView.setOnClickListener(errorListener);

@@ -56,6 +56,108 @@ public class LoadingFooter extends RelativeLayout {
         setState(status, true);
     }
 
+    public void setState(State status,int currentpage) {
+        setState(status, true,currentpage);
+    }
+    /**
+     * 设置状态
+     *
+     * @param status
+     * @param showView 是否展示当前View
+     */
+    public void setState(State status, boolean showView,int currpage) {
+        if (mState == status) {
+            return;
+        }
+        mState = status;
+
+        switch (status) {
+
+            case Normal:
+                setOnClickListener(null);
+                if (mLoadingView != null) {
+                    mLoadingView.setVisibility(GONE);
+                }
+
+                if (mTheEndView != null) {
+                    mTheEndView.setVisibility(GONE);
+                }
+
+                if (mNetworkErrorView != null) {
+                    mNetworkErrorView.setVisibility(GONE);
+                }
+
+                break;
+            case Loading:
+                setOnClickListener(null);
+                if (mTheEndView != null) {
+                    mTheEndView.setVisibility(GONE);
+                }
+
+                if (mNetworkErrorView != null) {
+                    mNetworkErrorView.setVisibility(GONE);
+                }
+
+                if (mLoadingView == null) {
+                    ViewStub viewStub = (ViewStub) findViewById(R.id.loading_viewstub);
+                    mLoadingView = viewStub.inflate();
+
+                    mLoadingProgress = (ProgressBar) mLoadingView.findViewById(R.id.loading_progress);
+                    mLoadingText = (TextView) mLoadingView.findViewById(R.id.loading_text);
+                } else {
+                    mLoadingView.setVisibility(VISIBLE);
+                }
+
+                mLoadingView.setVisibility(showView ? VISIBLE : GONE);
+
+                mLoadingProgress.setVisibility(View.VISIBLE);
+                mLoadingText.setText("正在加载"+currpage+"页...");
+                break;
+            case TheEnd:
+                setOnClickListener(null);
+                if (mLoadingView != null) {
+                    mLoadingView.setVisibility(GONE);
+                }
+
+                if (mNetworkErrorView != null) {
+                    mNetworkErrorView.setVisibility(GONE);
+                }
+
+                if (mTheEndView == null) {
+                    ViewStub viewStub = (ViewStub) findViewById(R.id.end_viewstub);
+                    mTheEndView = viewStub.inflate();
+                } else {
+                    mTheEndView.setVisibility(VISIBLE);
+                }
+
+                mTheEndView.setVisibility(showView ? VISIBLE : GONE);
+                break;
+            case NetWorkError:
+
+                if (mLoadingView != null) {
+                    mLoadingView.setVisibility(GONE);
+                }
+
+                if (mTheEndView != null) {
+                    mTheEndView.setVisibility(GONE);
+                }
+
+                if (mNetworkErrorView == null) {
+                    ViewStub viewStub = (ViewStub) findViewById(R.id.network_error_viewstub);
+                    mNetworkErrorView = viewStub.inflate();
+                } else {
+                    mNetworkErrorView.setVisibility(VISIBLE);
+                }
+
+                mNetworkErrorView.setVisibility(showView ? VISIBLE : GONE);
+                break;
+            default:
+
+                break;
+        }
+    }
+
+
     /**
      * 设置状态
      *

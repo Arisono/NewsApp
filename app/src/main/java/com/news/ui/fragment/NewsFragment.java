@@ -280,7 +280,7 @@ public class NewsFragment extends Fragment{
                         if (mNext.getShowapi_res_body().getPagebean().getContentlist().size()>0) {
                             contentlists.addAll(mNext.getShowapi_res_body().getPagebean().getContentlist());
                         }else{
-                            RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20, LoadingFooter.State.TheEnd, null);
+                            RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20,page, LoadingFooter.State.TheEnd, null);
                             --page;
                         }
                         adapter.notifyDataSetChanged();
@@ -313,15 +313,9 @@ public class NewsFragment extends Fragment{
                 Log.d("@Cundong", "the state is Loading, just wait..");
                 return;
             }
+            loadData(++page);
+            RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20,page, LoadingFooter.State.Loading, null);
 
-//            if (page <10) {
-//                // loading more
-                RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20, LoadingFooter.State.Loading, null);
-                loadData(++page);
-//            } else {
-//                //the end
-//                RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20, LoadingFooter.State.TheEnd, null);
-//            }
         }
     };
     /**
