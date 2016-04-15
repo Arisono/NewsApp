@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/webview_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-    </android.support.v7.widget.Toolbar>
-   <com.news.widget.ProgressWebView
+    <include layout="@layout/include_toolbar_base"/>
+    <com.news.widget.ProgressWebView
        android:id="@+id/base_webview"
        android:layout_width="match_parent"
        android:layout_height="match_parent">
-   </com.news.widget.ProgressWebView>
+    </com.news.widget.ProgressWebView>
 </LinearLayout>

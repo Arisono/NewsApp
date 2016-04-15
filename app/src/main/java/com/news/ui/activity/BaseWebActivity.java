@@ -22,15 +22,13 @@ import butterknife.ButterKnife;
  */
 public class BaseWebActivity extends AppCompatActivity {
     protected ProgressWebView mWebView;
-    @Bind(R.id.webview_toolbar)
+    @Bind(R.id.toolbar)
     public Toolbar toolbar;
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);//去除系统自带标题栏
         setContentView(R.layout.activity_baseweb);
-
         ButterKnife.bind(this);
         mWebView = (ProgressWebView) findViewById(R.id.base_webview);
         mWebView.getSettings().setJavaScriptEnabled(true);

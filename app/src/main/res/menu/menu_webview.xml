@@ -7,12 +7,12 @@
         android:id="@+id/action_share"
         android:orderInCategory="101"
         android:title="分享"
-        android:icon="@drawable/icon_more"
+        android:icon="@drawable/ic_toolbar_more"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_refresh"
         android:orderInCategory="100"
         android:title="刷新"
-        android:icon="@drawable/icon_more"
+        android:icon="@drawable/ic_toolbar_more"
         app:showAsAction="never"/>
 </menu>

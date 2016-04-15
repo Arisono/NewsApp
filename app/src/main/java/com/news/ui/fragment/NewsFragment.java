@@ -103,7 +103,7 @@ public class NewsFragment extends Fragment{
         this.name= getArguments().getString("name");
         this.channelId= getArguments().getString("channelId");
         LogUtils.i(TAG, name + ":onCreate()");
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
     }
 
 
