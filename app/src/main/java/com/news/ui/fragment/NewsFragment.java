@@ -31,6 +31,10 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.news.app.Constants;
 import com.news.model.NewsListEntity;
+import com.news.model.db.NewEntity;
+import com.news.model.db.PageBean;
+import com.news.model.db.PageBeanBody;
+import com.news.model.db.RootEntity;
 import com.news.service.interfac.OnItemClickListener;
 import com.news.service.interfac.OnItemLongClickListener;
 import com.news.ui.activity.BaseWebActivity;
@@ -251,7 +255,10 @@ public class NewsFragment extends Fragment{
                 public void processData(Object paramObject, boolean paramBoolean) {
                     Log.i(TAG, "json:" + paramObject.toString());
                     RecyclerViewStateUtils.setFooterViewState(mlist, LoadingFooter.State.Normal);
+                    RootEntity rootEntity=new RootEntity();
                     NewsListEntity mNext= JSON.parseObject(paramObject.toString(), NewsListEntity.class);
+
+
                     if(adapter==null){
                         contentlists=mNext.getShowapi_res_body().getPagebean().getContentlist();
                         adapter=new SimpleAdapter(getActivity(), contentlists);

@@ -14,6 +14,7 @@
         <ImageView
             android:id="@+id/img_tool_back"
             android:layout_width="60dp"
+            android:gravity="end"
             android:layout_height="match_parent"
             style="?attr/toolbarNavigationButtonStyle"
             android:src="@drawable/ic_toolbar_back"/>
