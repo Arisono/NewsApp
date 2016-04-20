@@ -6,12 +6,12 @@ import java.util.List;
  * Created by Administrator on 2016/4/19.
  * 分页类
  */
-public class PageBean {
+public class PageBean<T> {
     private int allNum;
     private int allPages;
     private int currentPage;
     private int maxResult;
-    private List<Object> contentlist;
+    private List<T> contentlist;
 
     public int getAllNum() {
         return allNum;
@@ -45,11 +45,11 @@ public class PageBean {
         this.maxResult = maxResult;
     }
 
-    public List<Object> getContentlist() {
+    public List<T> getContentlist() {
         return contentlist;
     }
 
-    public void setContentlist(List<Object> contentlist) {
+    public void setContentlist(List<T> contentlist) {
         this.contentlist = contentlist;
     }
 }

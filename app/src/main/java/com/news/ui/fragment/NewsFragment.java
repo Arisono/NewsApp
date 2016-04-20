@@ -38,6 +38,7 @@ import com.news.model.db.RootEntity;
 import com.news.service.interfac.OnItemClickListener;
 import com.news.service.interfac.OnItemLongClickListener;
 import com.news.ui.activity.BaseWebActivity;
+import com.news.util.base.ApiUtils;
 import com.news.util.base.StringUtils;
 import com.news.util.base.ToastUtils;
 import com.news.util.imageloader.ImageLoaderFactory;
@@ -76,9 +77,10 @@ public class NewsFragment extends Fragment{
 
     private SimpleAdapter adapter;
     private HeaderAndFooterRecyclerViewAdapter mHeaderAndFooterRecyclerViewAdapter = null;
-
     public int page=1;
-    private List<NewsListEntity.NewsListBody.Pagebean.Contentlist> contentlists=new ArrayList<>();
+
+    //NewsListEntity.NewsListBody.Pagebean.Contentlist
+    private List<NewEntity> contentlists=new ArrayList<>();
 
     private int lastVisibleItem;
     private Toolbar mMainToolbar;
@@ -255,18 +257,18 @@ public class NewsFragment extends Fragment{
                 public void processData(Object paramObject, boolean paramBoolean) {
                     Log.i(TAG, "json:" + paramObject.toString());
                     RecyclerViewStateUtils.setFooterViewState(mlist, LoadingFooter.State.Normal);
-                    RootEntity rootEntity=new RootEntity();
+                    RootEntity<NewEntity> rootEntity= ApiUtils.parseNewsList(paramObject.toString(),NewEntity.class);
                     NewsListEntity mNext= JSON.parseObject(paramObject.toString(), NewsListEntity.class);
 
 
                     if(adapter==null){
-                        contentlists=mNext.getShowapi_res_body().getPagebean().getContentlist();
+                        contentlists=rootEntity.getShowapi_res_body().getPagebean().getContentlist();
                         adapter=new SimpleAdapter(getActivity(), contentlists);
                         adapter.setOnItemClickListener(new OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, Object object) {
                                 Log.i(TAG,"点击事件：");
-                                NewsListEntity.NewsListBody.Pagebean.Contentlist data= (NewsListEntity.NewsListBody.Pagebean.Contentlist)object;
+                                NewEntity data= (NewEntity)object;
                                 Intent intent =new Intent(activity, BaseWebActivity.class);
                                 intent.putExtra("url",data.getLink());
                                 intent.putExtra("title",data.getTitle());
@@ -285,7 +287,7 @@ public class NewsFragment extends Fragment{
                         mlist.setAdapter(mHeaderAndFooterRecyclerViewAdapter);
                     }else{
                         if (mNext.getShowapi_res_body().getPagebean().getContentlist().size()>0) {
-                            contentlists.addAll(mNext.getShowapi_res_body().getPagebean().getContentlist());
+                            contentlists.addAll(rootEntity.getShowapi_res_body().getPagebean().getContentlist());
                         }else{
                             RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20,page, LoadingFooter.State.TheEnd, null);
                             --page;
@@ -331,7 +333,7 @@ public class NewsFragment extends Fragment{
      */
     public class SimpleAdapter extends  RecyclerView.Adapter<SimpleAdapter.ViewHolder> implements View.OnClickListener,View.OnLongClickListener {
 
-        List<NewsListEntity.NewsListBody.Pagebean.Contentlist> contentlists;
+        List<NewEntity> contentlists;
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
 
@@ -339,7 +341,7 @@ public class NewsFragment extends Fragment{
         private OnItemLongClickListener onItemLongClickListener;
 
         SimpleAdapter(Context context,
-                      List<NewsListEntity.NewsListBody.Pagebean.Contentlist> items){
+                      List<NewEntity> items){
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             this.contentlists=items;
