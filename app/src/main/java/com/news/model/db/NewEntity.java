@@ -1,32 +1,40 @@
 package com.news.model.db;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Administrator on 2016/4/19.
  */
+@DatabaseTable(tableName = "tbl_news")
 public class NewEntity {
 
+    @DatabaseField(generatedId = true)
+    private int id;
+    @DatabaseField(columnName = "channelId")
     private String channelId;
-
+    @DatabaseField(columnName = "channelName")
     private String channelName;
-
+    @DatabaseField(columnName = "chinajoy")
     private int chinajoy;
-
+    @DatabaseField(columnName = "desc")
     private String desc;
 
-    private List<ImageUrls> imageurls;
-
+    private List<ImageUrls> imageurls=new ArrayList<>();
+    @DatabaseField(columnName = "link")
     private String link;
-
+    @DatabaseField(columnName = "long_desc")
     private String long_desc;
-
+    @DatabaseField(columnName = "nid")
     private String nid;
-
+    @DatabaseField(columnName = "pubDate")
     private String pubDate;
-
+    @DatabaseField(columnName = "source")
     private String source;
-
+    @DatabaseField(columnName = "title")
     private String title;
 
     public String getChannelId() {

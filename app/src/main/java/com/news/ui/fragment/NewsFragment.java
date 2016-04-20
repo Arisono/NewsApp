@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.news.app.Constants;
+import com.news.db.dao.NewsDao;
 import com.news.model.NewsListEntity;
 import com.news.model.db.NewEntity;
 import com.news.model.db.PageBean;
@@ -39,6 +40,7 @@ import com.news.service.interfac.OnItemClickListener;
 import com.news.service.interfac.OnItemLongClickListener;
 import com.news.ui.activity.BaseWebActivity;
 import com.news.util.base.ApiUtils;
+import com.news.util.base.ListUtils;
 import com.news.util.base.StringUtils;
 import com.news.util.base.ToastUtils;
 import com.news.util.imageloader.ImageLoaderFactory;
@@ -109,7 +111,6 @@ public class NewsFragment extends Fragment{
         this.name= getArguments().getString("name");
         this.channelId= getArguments().getString("channelId");
         LogUtils.i(TAG, name + ":onCreate()");
-        //setHasOptionsMenu(true);
     }
 
 
@@ -144,7 +145,22 @@ public class NewsFragment extends Fragment{
         if (isVisibleToUser) {
             LogUtils.i(TAG, name + ":setUserVisibleHint()");
             if (isFirstLoad){
-               initData(page);
+               List<NewEntity> newEntities=NewsDao.getInstance().findAllNews();
+                if (ListUtils.isEmpty(newEntities)){
+                    LogUtils.i("初始化网络请求");
+                    initData(page);
+                }else{
+                    LogUtils.i("初始化数据库数据");
+                    if (adapter==null){
+                        contentlists.addAll(newEntities);
+                        adapter=new SimpleAdapter(getActivity(), contentlists);
+                        if (mlist!=null)
+                        mlist.setAdapter(adapter);
+                    }else{
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+
              }
         }
     }
@@ -257,9 +273,9 @@ public class NewsFragment extends Fragment{
                 public void processData(Object paramObject, boolean paramBoolean) {
                     Log.i(TAG, "json:" + paramObject.toString());
                     RecyclerViewStateUtils.setFooterViewState(mlist, LoadingFooter.State.Normal);
-                    RootEntity<NewEntity> rootEntity= ApiUtils.parseNewsList(paramObject.toString(),NewEntity.class);
-                    NewsListEntity mNext= JSON.parseObject(paramObject.toString(), NewsListEntity.class);
-
+                    RootEntity<NewEntity> rootEntity= ApiUtils.parseNewsList(paramObject.toString(), NewEntity.class);
+                    //NewsListEntity mNext= JSON.parseObject(paramObject.toString(), NewsListEntity.class);
+                    NewsDao.getInstance().saveAll(rootEntity.getShowapi_res_body().getPagebean().getContentlist());
 
                     if(adapter==null){
                         contentlists=rootEntity.getShowapi_res_body().getPagebean().getContentlist();
@@ -286,7 +302,7 @@ public class NewsFragment extends Fragment{
                         mHeaderAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
                         mlist.setAdapter(mHeaderAndFooterRecyclerViewAdapter);
                     }else{
-                        if (mNext.getShowapi_res_body().getPagebean().getContentlist().size()>0) {
+                        if (rootEntity.getShowapi_res_body().getPagebean().getContentlist().size()>0) {
                             contentlists.addAll(rootEntity.getShowapi_res_body().getPagebean().getContentlist());
                         }else{
                             RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20,page, LoadingFooter.State.TheEnd, null);
