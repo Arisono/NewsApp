@@ -8,7 +8,6 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.news.app.Application;
 import com.news.db.SQLiteHelper;
 import com.news.model.db.NewEntity;
-import com.news.util.base.ArrayUtils;
 import com.news.util.base.ListUtils;
 import com.news.util.base.LogUtils;
 
@@ -110,6 +109,7 @@ public class NewsDao {
             return  newsDao.query(queryBuilder.prepare());
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally {
         }
         return  lists;
     }

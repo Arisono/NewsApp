@@ -7,53 +7,43 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.news.app.Constants;
 import com.news.db.dao.NewsDao;
-import com.news.model.NewsListEntity;
 import com.news.model.db.NewEntity;
-import com.news.model.db.PageBean;
-import com.news.model.db.PageBeanBody;
 import com.news.model.db.RootEntity;
+import com.news.net.R;
 import com.news.service.interfac.OnItemClickListener;
 import com.news.service.interfac.OnItemLongClickListener;
 import com.news.ui.activity.BaseWebActivity;
 import com.news.util.base.ApiUtils;
 import com.news.util.base.ListUtils;
-import com.news.util.base.StringUtils;
-import com.news.util.base.ToastUtils;
+import com.news.util.base.LogUtils;
 import com.news.util.imageloader.ImageLoaderFactory;
 import com.news.util.imageloader.ImageLoaderWrapper;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
-import com.news.net.R;
-import com.news.util.base.LogUtils;
 import com.news.widget.recyclerView.EndlessRecyclerOnScrollListener;
 import com.news.widget.recyclerView.HeaderAndFooterRecyclerViewAdapter;
 import com.news.widget.recyclerView.footer.LoadingFooter;
 import com.news.widget.recyclerView.footer.RecyclerViewStateUtils;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,25 +62,20 @@ import butterknife.ButterKnife;
 public class NewsFragment extends Fragment{
 
     private String TAG="NewsFragment";
-    @Bind(R.id.mlist)
-    public RecyclerView mlist;
-    @Bind(R.id.swipe_refresh_layout)
-    public  SwipeRefreshLayout swipe_refresh_layout;
-
-    private SimpleAdapter adapter;
-    private HeaderAndFooterRecyclerViewAdapter mHeaderAndFooterRecyclerViewAdapter = null;
     public int page=1;
 
-    //NewsListEntity.NewsListBody.Pagebean.Contentlist
+    @Bind(R.id.mlist)
+    public RecyclerView mlist;
+    private SimpleAdapter adapter;
+    @Bind(R.id.swipe_refresh_layout)
+    public  SwipeRefreshLayout swipe_refresh_layout;
+    private HeaderAndFooterRecyclerViewAdapter mHeaderAndFooterRecyclerViewAdapter = null;
     private List<NewEntity> contentlists=new ArrayList<>();
 
-    private int lastVisibleItem;
-    private Toolbar mMainToolbar;
     private String name;
     private String channelId;
     private Activity activity;
     private boolean isFirstLoad=true;
-
     public SearchView mSearchView;
     private ImageLoaderWrapper mImageLoaderWrapper;
 
@@ -115,90 +100,60 @@ public class NewsFragment extends Fragment{
 
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_news, menu);
-        final MenuItem item = menu.findItem(R.id.action_search);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(item);
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (StringUtils.isEmpty(newText)) {
-                    //tabLayout.setVisibility(View.VISIBLE);
-                } else {
-                    //tabLayout.setVisibility(View.INVISIBLE);
-                    ToastUtils.show(getActivity(), newText, 2000);
-                }
-                return true;
-            }
-        });
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             LogUtils.i(TAG, name + ":setUserVisibleHint()");
             if (isFirstLoad){
-               List<NewEntity> newEntities=NewsDao.getInstance().findNewsByChannelId(channelId,page);
-                if (ListUtils.isEmpty(newEntities)){
-                    LogUtils.i("初始化网络请求");
-                    initData(page);
-                }else{
-                    LogUtils.i("初始化数据库数据");
-                    if (adapter==null){
-                        contentlists.addAll(newEntities);
-                        adapter=new SimpleAdapter(getActivity(), contentlists);
-                        if (mlist!=null)
-                        mlist.setAdapter(adapter);
-                    }else{
-                        adapter.notifyDataSetChanged();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipe_refresh_layout.setRefreshing(true);
+                        initData(1);
                     }
-                }
-
+                },100);
              }
         }
     }
 
+
     public void initView(){
         mImageLoaderWrapper= ImageLoaderFactory.getLoader();
+
         mlist.setLayoutManager(new LinearLayoutManager(mlist.getContext()));
+        adapter=new SimpleAdapter(getActivity(),contentlists);
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, Object object) {
+                NewEntity data = (NewEntity) object;
+                Intent intent = new Intent(activity, BaseWebActivity.class);
+                intent.putExtra("url", data.getLink());
+                intent.putExtra("title", data.getTitle());
+                activity.startActivity(intent);
+            }
+        });
+        DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
+        dividerLine.setSize(1);
+        dividerLine.setColor(0x00000000);
+        dividerLine.setSpace(10);
+        mlist.addItemDecoration(dividerLine);
+        mHeaderAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
+        mlist.setAdapter(mHeaderAndFooterRecyclerViewAdapter);
+
+
         swipe_refresh_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 contentlists.clear();//下拉刷新，清空列表
                 // adapter.notifyDataSetChanged(); //clear this is create a bug for
                 //或者禁止滑動
+                swipe_refresh_layout.setRefreshing(true);
                 loadData(1);
             }
         });
 
-
         mlist.addOnScrollListener(mOnScrollListener);
-        /*mlist.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (adapter == null) return;
-                if (newState == RecyclerView.SCROLL_STATE_IDLE
-                        && lastVisibleItem + 1 == adapter.getItemCount()) {
-                    swipe_refresh_layout.setRefreshing(true);
-                    initData(++page);
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                lastVisibleItem = ((LinearLayoutManager) mlist.getLayoutManager()).findLastVisibleItemPosition();
-            }
-        });*/
-
+        //刷新禁止滑动
         mlist.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -209,7 +164,6 @@ public class NewsFragment extends Fragment{
                 }
             }
         });
-
     }
 
 
@@ -244,11 +198,23 @@ public class NewsFragment extends Fragment{
     * @desc:initdata
     * @author：Administrator on 2016/1/4 16:02
     */
-   public void initData(int count){
-       if(swipe_refresh_layout!=null){
-           swipe_refresh_layout.setRefreshing(true);
+   public void initData(int page){
+      final List<NewEntity> newEntities= NewsDao.getInstance().findNewsByChannelId(channelId,page);
+       if (ListUtils.isEmpty(newEntities)){
+           LogUtils.i("初始化网络请求:ss"+page);
+           loadData(page);
+       }else{
+           LogUtils.i("初始化数据库数据:"+page);
+          new Handler().postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                  contentlists.addAll(newEntities);
+                  RecyclerViewStateUtils.setFooterViewState(mlist, LoadingFooter.State.Normal);
+                  adapter.notifyDataSetChanged();
+                  swipe_refresh_layout.setRefreshing(false);
+              }
+          },1000);
        }
-       loadData(count);
    }
 
 
@@ -262,70 +228,49 @@ public class NewsFragment extends Fragment{
         param.put("channelId", channelId);
         param.put("page",count);
         //param.put("channelName", "国内最新");
-            NetUtils.httpResquest(activity, url, param, Constants.HTTP_GET, new HttpDataCallBack() {
-                @Override
-                public void onStart() {
-                    LogUtils.i(TAG,"开始加载数据："+name);
-                    //Log.i(TAG, "http start...");
-                }
+        NetUtils.httpResquest(activity, url, param, Constants.HTTP_GET, new HttpDataCallBack() {
+            @Override
+            public void onStart() {
+                LogUtils.i(TAG,"开始加载数据："+name);
+            }
 
-                @Override
-                public void processData(Object paramObject, boolean paramBoolean) {
-                    Log.i(TAG, "json:" + paramObject.toString());
-                    RecyclerViewStateUtils.setFooterViewState(mlist, LoadingFooter.State.Normal);
-                    RootEntity<NewEntity> rootEntity= ApiUtils.parseNewsList(paramObject.toString(), NewEntity.class);
-                    //NewsListEntity mNext= JSON.parseObject(paramObject.toString(), NewsListEntity.class);
-                    NewsDao.getInstance().saveAll(rootEntity.getShowapi_res_body().getPagebean().getContentlist());
+            @Override
+            public void processData(Object paramObject, boolean paramBoolean) {
+                Log.i(TAG, "json:" + paramObject.toString());
+                displayUi(paramObject);
+            }
 
-                    if(adapter==null){
-                        contentlists=rootEntity.getShowapi_res_body().getPagebean().getContentlist();
-                        adapter=new SimpleAdapter(getActivity(), contentlists);
-                        adapter.setOnItemClickListener(new OnItemClickListener() {
-                            @Override
-                            public void onItemClick(View view, Object object) {
-                                Log.i(TAG,"点击事件：");
-                                NewEntity data= (NewEntity)object;
-                                Intent intent =new Intent(activity, BaseWebActivity.class);
-                                intent.putExtra("url",data.getLink());
-                                intent.putExtra("title",data.getTitle());
-                                activity.startActivity(intent);
-                                Log.i(TAG,"标题："+ data.getTitle());
-                            }
-                        });
-                        LogUtils.i(TAG, "initdata() mlist:" + mlist);
-                        if (mlist==null)return;
-                        DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
-                        dividerLine.setSize(1);
-                        dividerLine.setColor(0x00000000);
-                        dividerLine.setSpace(10);
-                        mlist.addItemDecoration(dividerLine);
-                        mHeaderAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
-                        mlist.setAdapter(mHeaderAndFooterRecyclerViewAdapter);
-                    }else{
-                        if (rootEntity.getShowapi_res_body().getPagebean().getContentlist().size()>0) {
-                            contentlists.addAll(rootEntity.getShowapi_res_body().getPagebean().getContentlist());
-                        }else{
-                            RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20,page, LoadingFooter.State.TheEnd, null);
-                            --page;
-                        }
-                        adapter.notifyDataSetChanged();
-                    }
-                    swipe_refresh_layout.setRefreshing(false);
-                }
+            @Override
+            public void onFinish() {
+                isFirstLoad=false;
+            }
 
-                @Override
-                public void onFinish() {
-                    // Log.i(TAG, "http end...");
-                    isFirstLoad=false;
-                }
-
-                @Override
-                public void onFailed() {
-                    Log.i(TAG, "http onFail...");
-                }
-            });
+            @Override
+            public void onFailed() {
+                Log.i(TAG, "http onFail...");
+            }
+        });
     }
 
+    /**
+     * @desc: 处理网络请求返回数据
+     * @author: Arison
+     * @create: 2016/4/21 21:16
+     */
+    private void displayUi(Object paramObject) {
+        RecyclerViewStateUtils.setFooterViewState(mlist, LoadingFooter.State.Normal);
+        RootEntity<NewEntity> rootEntity= ApiUtils.parseNewsList(paramObject.toString(), NewEntity.class);
+        NewsDao.getInstance().saveAll(rootEntity.getShowapi_res_body().getPagebean().getContentlist());
+        List<NewEntity> newEntities=rootEntity.getShowapi_res_body().getPagebean().getContentlist();
+        if (newEntities.size()>0) {
+            contentlists.addAll(newEntities);
+        }else{
+            RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20,page, LoadingFooter.State.TheEnd, null);
+            --page;
+        }
+        adapter.notifyDataSetChanged();
+        swipe_refresh_layout.setRefreshing(false);
+    }
 
 
     private EndlessRecyclerOnScrollListener mOnScrollListener = new EndlessRecyclerOnScrollListener() {
@@ -338,18 +283,19 @@ public class NewsFragment extends Fragment{
                 Log.d("@Cundong", "the state is Loading, just wait..");
                 return;
             }
-            loadData(++page);
-            RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20,page, LoadingFooter.State.Loading, null);
+            initData(++page);
+            RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20, page, LoadingFooter.State.Loading, null);
 
         }
     };
+
     /**
      * @desc:RecyclerView adapter
      * @author：Administrator on 2016/1/5 15:30
      */
     public class SimpleAdapter extends  RecyclerView.Adapter<SimpleAdapter.ViewHolder> implements View.OnClickListener,View.OnLongClickListener {
 
-        List<NewEntity> contentlists;
+        List<NewEntity> contentLists;
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
 
@@ -360,7 +306,7 @@ public class NewsFragment extends Fragment{
                       List<NewEntity> items){
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
-            this.contentlists=items;
+            this.contentLists=items;
         }
 
         @Override
@@ -372,16 +318,16 @@ public class NewsFragment extends Fragment{
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.tv_news_title.setText(contentlists.get(position).getTitle());
-            holder.tv_news_source.setText(contentlists.get(position).getSource());
-            holder.tv_news_time.setText(contentlists.get(position).getPubDate());
-            holder.tv_news_desc.setText(contentlists.get(position).getDesc());
-            int size=contentlists.get(position).getImageurls().size();
+            holder.tv_news_title.setText(contentLists.get(position).getTitle());
+            holder.tv_news_source.setText(contentLists.get(position).getSource());
+            holder.tv_news_time.setText(contentLists.get(position).getPubDate());
+            holder.tv_news_desc.setText(contentLists.get(position).getDesc());
+            int size=contentLists.get(position).getImageurls().size();
             if (size==1){
                 ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
                 displayOption.loadingResId = R.mipmap.img_default;
                 displayOption.loadErrorResId = R.mipmap.img_error;
-                mImageLoaderWrapper.displayImage(holder.iv_news_bigimage, contentlists.get(position).getImageurls().get(0).getUrl(), displayOption);
+                mImageLoaderWrapper.displayImage(holder.iv_news_bigimage, contentLists.get(position).getImageurls().get(0).getUrl(), displayOption);
                 holder.ll_image_third.setVisibility(View.GONE);
                 holder.ll_image_one.setVisibility(View.VISIBLE);
                 holder.iv_news_leftimage.setVisibility(View.GONE);
@@ -389,9 +335,9 @@ public class NewsFragment extends Fragment{
                 ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
                 displayOption.loadingResId = R.mipmap.img_default;
                 displayOption.loadErrorResId = R.mipmap.img_error;
-                mImageLoaderWrapper.displayImage(holder.iv_news_oneimage, contentlists.get(position).getImageurls().get(0).getUrl(), displayOption);
-                mImageLoaderWrapper.displayImage(holder.iv_news_twoimage, contentlists.get(position).getImageurls().get(1).getUrl(), displayOption);
-                mImageLoaderWrapper.displayImage(holder.iv_news_thirdimage, contentlists.get(position).getImageurls().get(2).getUrl(), displayOption);
+                mImageLoaderWrapper.displayImage(holder.iv_news_oneimage, contentLists.get(position).getImageurls().get(0).getUrl(), displayOption);
+                mImageLoaderWrapper.displayImage(holder.iv_news_twoimage, contentLists.get(position).getImageurls().get(1).getUrl(), displayOption);
+                mImageLoaderWrapper.displayImage(holder.iv_news_thirdimage, contentLists.get(position).getImageurls().get(2).getUrl(), displayOption);
                 holder.ll_image_third.setVisibility(View.VISIBLE);
                 holder.ll_image_one.setVisibility(View.GONE);
                 holder.iv_news_leftimage.setVisibility(View.GONE);
@@ -399,7 +345,7 @@ public class NewsFragment extends Fragment{
                 ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
                 displayOption.loadingResId = R.mipmap.img_default;
                 displayOption.loadErrorResId = R.mipmap.img_error;
-                mImageLoaderWrapper.displayImage(holder.iv_news_bigimage, contentlists.get(position).getImageurls().get(0).getUrl(), displayOption);
+                mImageLoaderWrapper.displayImage(holder.iv_news_bigimage, contentLists.get(position).getImageurls().get(0).getUrl(), displayOption);
                 holder.ll_image_third.setVisibility(View.GONE);
                 holder.ll_image_one.setVisibility(View.VISIBLE);
                 holder.iv_news_leftimage.setVisibility(View.GONE);
@@ -417,12 +363,12 @@ public class NewsFragment extends Fragment{
             holder.mView.setOnClickListener(this);
 
 
-            holder.itemView.setTag(contentlists.get(position));
+            holder.itemView.setTag(contentLists.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return contentlists==null?0:contentlists.size();
+            return contentLists==null?0:contentLists.size();
         }
 
         @Override

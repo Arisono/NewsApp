@@ -34,7 +34,7 @@ public class NewEntity {
     private String pubDate;
     @DatabaseField(columnName = "source")
     private String source;
-    @DatabaseField(columnName = "title")
+    @DatabaseField(columnName = "title",unique =true)
     private String title;
 
     public String getChannelId() {
