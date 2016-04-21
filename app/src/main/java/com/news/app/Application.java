@@ -8,6 +8,12 @@ import com.news.util.imageloader.UniversalAndroidImageLoader;
  */
 public class Application extends android.app.Application{
 
+    private static Application INSTANCE = null;
+
+    public static Application getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -15,6 +21,7 @@ public class Application extends android.app.Application{
     }
 
     public void init(){
+        INSTANCE=this;
         //初始化图片加载器
         UniversalAndroidImageLoader.init(getApplicationContext());
     }

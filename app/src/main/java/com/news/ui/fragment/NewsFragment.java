@@ -30,23 +30,30 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.news.app.Constants;
+import com.news.db.dao.NewsDao;
 import com.news.model.NewsListEntity;
+import com.news.model.db.NewEntity;
+import com.news.model.db.PageBean;
+import com.news.model.db.PageBeanBody;
 import com.news.model.db.RootEntity;
-import com.news.net.R;
 import com.news.service.interfac.OnItemClickListener;
 import com.news.service.interfac.OnItemLongClickListener;
 import com.news.ui.activity.BaseWebActivity;
-import com.news.util.base.LogUtils;
+import com.news.util.base.ApiUtils;
+import com.news.util.base.ListUtils;
 import com.news.util.base.StringUtils;
 import com.news.util.base.ToastUtils;
 import com.news.util.imageloader.ImageLoaderFactory;
 import com.news.util.imageloader.ImageLoaderWrapper;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
+import com.news.net.R;
+import com.news.util.base.LogUtils;
 import com.news.widget.recyclerView.EndlessRecyclerOnScrollListener;
 import com.news.widget.recyclerView.HeaderAndFooterRecyclerViewAdapter;
 import com.news.widget.recyclerView.footer.LoadingFooter;
 import com.news.widget.recyclerView.footer.RecyclerViewStateUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,9 +79,10 @@ public class NewsFragment extends Fragment{
 
     private SimpleAdapter adapter;
     private HeaderAndFooterRecyclerViewAdapter mHeaderAndFooterRecyclerViewAdapter = null;
-
     public int page=1;
-    private List<NewsListEntity.NewsListBody.Pagebean.Contentlist> contentlists=new ArrayList<>();
+
+    //NewsListEntity.NewsListBody.Pagebean.Contentlist
+    private List<NewEntity> contentlists=new ArrayList<>();
 
     private int lastVisibleItem;
     private Toolbar mMainToolbar;
@@ -103,7 +111,6 @@ public class NewsFragment extends Fragment{
         this.name= getArguments().getString("name");
         this.channelId= getArguments().getString("channelId");
         LogUtils.i(TAG, name + ":onCreate()");
-        //setHasOptionsMenu(true);
     }
 
 
@@ -138,7 +145,22 @@ public class NewsFragment extends Fragment{
         if (isVisibleToUser) {
             LogUtils.i(TAG, name + ":setUserVisibleHint()");
             if (isFirstLoad){
-               initData(page);
+               List<NewEntity> newEntities=NewsDao.getInstance().findNewsByChannelId(channelId,page);
+                if (ListUtils.isEmpty(newEntities)){
+                    LogUtils.i("初始化网络请求");
+                    initData(page);
+                }else{
+                    LogUtils.i("初始化数据库数据");
+                    if (adapter==null){
+                        contentlists.addAll(newEntities);
+                        adapter=new SimpleAdapter(getActivity(), contentlists);
+                        if (mlist!=null)
+                        mlist.setAdapter(adapter);
+                    }else{
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+
              }
         }
     }
@@ -251,18 +273,18 @@ public class NewsFragment extends Fragment{
                 public void processData(Object paramObject, boolean paramBoolean) {
                     Log.i(TAG, "json:" + paramObject.toString());
                     RecyclerViewStateUtils.setFooterViewState(mlist, LoadingFooter.State.Normal);
-                    RootEntity rootEntity=new RootEntity();
-                    NewsListEntity mNext= JSON.parseObject(paramObject.toString(), NewsListEntity.class);
-
+                    RootEntity<NewEntity> rootEntity= ApiUtils.parseNewsList(paramObject.toString(), NewEntity.class);
+                    //NewsListEntity mNext= JSON.parseObject(paramObject.toString(), NewsListEntity.class);
+                    NewsDao.getInstance().saveAll(rootEntity.getShowapi_res_body().getPagebean().getContentlist());
 
                     if(adapter==null){
-                        contentlists=mNext.getShowapi_res_body().getPagebean().getContentlist();
+                        contentlists=rootEntity.getShowapi_res_body().getPagebean().getContentlist();
                         adapter=new SimpleAdapter(getActivity(), contentlists);
                         adapter.setOnItemClickListener(new OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, Object object) {
                                 Log.i(TAG,"点击事件：");
-                                NewsListEntity.NewsListBody.Pagebean.Contentlist data= (NewsListEntity.NewsListBody.Pagebean.Contentlist)object;
+                                NewEntity data= (NewEntity)object;
                                 Intent intent =new Intent(activity, BaseWebActivity.class);
                                 intent.putExtra("url",data.getLink());
                                 intent.putExtra("title",data.getTitle());
@@ -280,8 +302,8 @@ public class NewsFragment extends Fragment{
                         mHeaderAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
                         mlist.setAdapter(mHeaderAndFooterRecyclerViewAdapter);
                     }else{
-                        if (mNext.getShowapi_res_body().getPagebean().getContentlist().size()>0) {
-                            contentlists.addAll(mNext.getShowapi_res_body().getPagebean().getContentlist());
+                        if (rootEntity.getShowapi_res_body().getPagebean().getContentlist().size()>0) {
+                            contentlists.addAll(rootEntity.getShowapi_res_body().getPagebean().getContentlist());
                         }else{
                             RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20,page, LoadingFooter.State.TheEnd, null);
                             --page;
@@ -327,7 +349,7 @@ public class NewsFragment extends Fragment{
      */
     public class SimpleAdapter extends  RecyclerView.Adapter<SimpleAdapter.ViewHolder> implements View.OnClickListener,View.OnLongClickListener {
 
-        List<NewsListEntity.NewsListBody.Pagebean.Contentlist> contentlists;
+        List<NewEntity> contentlists;
         private final TypedValue mTypedValue = new TypedValue();
         private int mBackground;
 
@@ -335,7 +357,7 @@ public class NewsFragment extends Fragment{
         private OnItemLongClickListener onItemLongClickListener;
 
         SimpleAdapter(Context context,
-                      List<NewsListEntity.NewsListBody.Pagebean.Contentlist> items){
+                      List<NewEntity> items){
             context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
             mBackground = mTypedValue.resourceId;
             this.contentlists=items;
