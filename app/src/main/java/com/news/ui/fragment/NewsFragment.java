@@ -145,7 +145,7 @@ public class NewsFragment extends Fragment{
         if (isVisibleToUser) {
             LogUtils.i(TAG, name + ":setUserVisibleHint()");
             if (isFirstLoad){
-               List<NewEntity> newEntities=NewsDao.getInstance().findAllNews();
+               List<NewEntity> newEntities=NewsDao.getInstance().findNewsByChannelId(channelId,page);
                 if (ListUtils.isEmpty(newEntities)){
                     LogUtils.i("初始化网络请求");
                     initData(page);

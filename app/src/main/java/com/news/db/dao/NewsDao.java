@@ -79,7 +79,7 @@ public class NewsDao {
      * @author：Administrator on 2016/4/20 17:21
      */
     public List<NewEntity> findAllNews(){
-       List<NewEntity> lists=new ArrayList<>();
+        List<NewEntity> lists=new ArrayList<>();
         QueryBuilder<NewEntity,String> bulider=newsDao.queryBuilder();
         bulider.orderBy("pubDate",false);
         try {
@@ -90,4 +90,28 @@ public class NewsDao {
         }
         return  lists;
     }
+
+    /**
+     * @desc:根据频道ID查询新闻数据 支持分页
+     * @author：Administrator on 2016/4/21 16:42
+     */
+    public List<NewEntity> findNewsByChannelId(String channelId,int page){
+        int pageSize=20;
+        page=page-1;
+        long offset=page*pageSize;
+        long limit=offset+pageSize;
+
+        List<NewEntity> lists=new ArrayList<>();
+        QueryBuilder<NewEntity,String> queryBuilder=newsDao.queryBuilder();
+        try {
+            queryBuilder.where().eq("channelId",channelId);
+            queryBuilder.offset(offset);
+            queryBuilder.limit(limit);
+            return  newsDao.query(queryBuilder.prepare());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  lists;
+    }
+
 }
