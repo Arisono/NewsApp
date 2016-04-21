@@ -7,7 +7,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.news.ui.activity.IndexActivity">
-
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,13 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:theme="@style/AppTheme.AppBarOverlay">
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:layout_scrollFlags="scroll|enterAlways|snap" />
+            <include layout="@layout/include_toolbar_hided"/>
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
                 android:layout_height="wrap_content"
@@ -46,7 +39,7 @@
             android:src="@android:drawable/ic_dialog_email" />
     </android.support.design.widget.CoordinatorLayout>
 
-
+    <!--侧边布局-->
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_left"
         android:layout_width="wrap_content"

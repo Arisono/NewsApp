@@ -45,6 +45,7 @@ public class NewsChannelEntity{
             this.channelList = channelList;
         }
         public class ChannelList{
+
             public String channelId;
 
             public String name;

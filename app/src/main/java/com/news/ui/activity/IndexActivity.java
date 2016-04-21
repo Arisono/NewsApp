@@ -1,25 +1,38 @@
 package com.news.ui.activity;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.news.adapter.NewsFragmentAdapter;
 import com.news.app.Constants;
-import com.news.model.NewsChannelEntity;
-import com.news.net.R;
 import com.news.ui.fragment.NewsFragment;
+import com.news.model.NewsChannelEntity;
+import com.news.util.base.StringUtils;
+import com.news.util.base.ToastUtils;
 import com.news.util.net.HttpClientUtil;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
+import com.news.net.R;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 
@@ -42,8 +55,7 @@ public class IndexActivity extends AppCompatActivity {
     public Toolbar toolbar;
     @Bind(R.id.fab)
     public FloatingActionButton fab;
-
-    public SearchView mSearchView;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +85,6 @@ public class IndexActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
     /**
@@ -91,13 +101,12 @@ public class IndexActivity extends AppCompatActivity {
         param.put("showapi_timestamp", datetime);
         url=Constants.API_NEWS_CHANNEL;
         httpResquest(url, param);
-
     }
 
-  /*  @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_news,menu);
-        final MenuItem item = menu.findItem(R.id.action_search);
+        getMenuInflater().inflate(R.menu.menu_news, menu);
+        /*final MenuItem item = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(item);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -107,17 +116,31 @@ public class IndexActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(StringUtils.isEmpty(newText)){
+                if (StringUtils.isEmpty(newText)) {
                     tabLayout.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     tabLayout.setVisibility(View.INVISIBLE);
-                    ToastUtils.show(IndexActivity.this,newText,2000);
+                    ToastUtils.show(IndexActivity.this, newText, 2000);
                 }
                 return true;
             }
-        });
+        });*/
         return true;
-    }*/
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.action_search:
+                loadToolBarSearch();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void setupViewPager(ViewPager viewPager,List<NewsChannelEntity.ChannelEntity.ChannelList> channelList) {
         NewsFragmentAdapter adapter = new NewsFragmentAdapter(getSupportFragmentManager());
@@ -175,6 +198,48 @@ public class IndexActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @desc:加载搜索框
+     * @author：Administrator on 2016/4/15 15:50
+     */
+    public void loadToolBarSearch() {
+        View view = getLayoutInflater().inflate(R.layout.view_toolbar_search, null);
+        LinearLayout parentToolbarSearch = (LinearLayout) view.findViewById(R.id.parent_toolbar_search);
+        ImageView imgToolBack = (ImageView) view.findViewById(R.id.img_tool_back);
+        ImageView imgToolMic = (ImageView) view.findViewById(R.id.img_tool_mic);
+        final EditText edtToolSearch = (EditText) view.findViewById(R.id.edt_tool_search);
+        final ListView listSearch = (ListView) view.findViewById(R.id.list_search);
+        final TextView txtEmpty = (TextView) view.findViewById(R.id.txt_empty);
+
+        edtToolSearch.setHint("输入您感兴趣的内容...");
+
+        final Dialog toolbarSearchDialog = new Dialog(IndexActivity.this, R.style.MaterialSearch);
+        toolbarSearchDialog.setContentView(view);
+        toolbarSearchDialog.setCancelable(false);
+        toolbarSearchDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        toolbarSearchDialog.getWindow().setGravity(Gravity.BOTTOM);
+        toolbarSearchDialog.show();
+
+        toolbarSearchDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+
+        imgToolBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toolbarSearchDialog.dismiss();
+            }
+        });
+
+        imgToolMic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                edtToolSearch.setText("");
+
+            }
+        });
     }
 
 }

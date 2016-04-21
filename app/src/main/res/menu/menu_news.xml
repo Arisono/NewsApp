@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.news.ui.activity.IndexActivity" >
+    <!-- app:actionViewClass="android.support.v7.widget.SearchView"  去除自己定义查询样式-->
     <item
         android:id="@+id/action_search"
         android:icon="@mipmap/icon_search"
-        app:actionViewClass="android.support.v7.widget.SearchView"
         android:title="@string/menu_find"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_refresh"
         android:orderInCategory="100"
         android:title="@string/menu_refresh"
-        android:icon="@drawable/icon_more"
+        android:icon="@drawable/ic_toolbar_more"
         app:showAsAction="never"/>
 </menu>

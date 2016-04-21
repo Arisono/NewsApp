@@ -23,7 +23,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.news.ui.activity.BaseWebActivity"></activity>
+        <activity
+            android:name="com.news.ui.activity.BaseWebActivity"
+            android:theme="@style/AppTheme.NoActionBar" ></activity>
     </application>
 
 </manifest>
