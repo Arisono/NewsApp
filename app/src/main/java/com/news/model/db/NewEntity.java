@@ -37,6 +37,15 @@ public class NewEntity {
     @DatabaseField(columnName = "title",unique =true)
     private String title;
 
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getChannelId() {
         return channelId;
     }

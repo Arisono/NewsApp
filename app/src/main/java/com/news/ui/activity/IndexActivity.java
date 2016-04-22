@@ -24,9 +24,15 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.news.adapter.NewsFragmentAdapter;
 import com.news.app.Constants;
+import com.news.db.dao.NewsDao;
 import com.news.model.NewsChannelEntity;
+import com.news.model.db.ChannelEntity;
+import com.news.model.db.ListRootBean;
 import com.news.net.R;
 import com.news.ui.fragment.NewsFragment;
+import com.news.util.base.ApiUtils;
+import com.news.util.base.ListUtils;
+import com.news.util.base.LogUtils;
 import com.news.util.net.HttpClientUtil;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
@@ -89,6 +95,12 @@ public class IndexActivity extends AppCompatActivity {
      * @author：Administrator on 2015/12/21 16:40
      */
     public void initData(){
+        List<ChannelEntity> channelEntities= NewsDao.getInstance().findAllChannel();
+        if (!ListUtils.isEmpty(channelEntities)){
+            LogUtils.i("频道取缓存...");
+            setupViewPager(viewPager, channelEntities);
+        }else{
+            LogUtils.i("频道取网络...");
         Logger.init("IndexActivity").setLogLevel(LogLevel.FULL);
         String url=Constants.API_NEWS;
         String datetime=new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -98,6 +110,7 @@ public class IndexActivity extends AppCompatActivity {
         param.put("showapi_timestamp", datetime);
         url=Constants.API_NEWS_CHANNEL;
         httpResquest(url, param);
+        }
     }
 
     @Override
@@ -139,7 +152,7 @@ public class IndexActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupViewPager(ViewPager viewPager,List<NewsChannelEntity.ChannelEntity.ChannelList> channelList) {
+    private void setupViewPager(ViewPager viewPager,List<ChannelEntity> channelList) {
         NewsFragmentAdapter adapter = new NewsFragmentAdapter(getSupportFragmentManager());
         if(!channelList.isEmpty()){
              for(int i=0;i<channelList.size();i++){
@@ -156,7 +169,7 @@ public class IndexActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(channelList.size());//预加载
     }
 
-    private void httpResquest(String url, Map<String, Object> param) {
+    private void httpResquest(String url, final Map<String, Object> param) {
         NetUtils.httpResquest(this, url, param, Constants.HTTP_GET, new HttpDataCallBack() {
             @Override
             public void onStart() {
@@ -166,8 +179,13 @@ public class IndexActivity extends AppCompatActivity {
             @Override
             public void processData(Object paramObject, boolean paramBoolean) {
                 Log.i(TAG, "json:" + paramObject.toString());
-                NewsChannelEntity newsChannelEntity=JSON.parseObject(paramObject.toString(),NewsChannelEntity.class);
-                setupViewPager(viewPager,newsChannelEntity.getShowapi_res_body().getChannelList());
+                //NewsChannelEntity newsChannelEntity=JSON.parseObject(paramObject.toString(),NewsChannelEntity.class);
+                ListRootBean<ChannelEntity> rootBean = ApiUtils.parseChannelList(paramObject.toString(), ChannelEntity.class);
+                if (!ListUtils.isEmpty(rootBean.getShowapi_res_body().getChannelList())) {
+                    NewsDao.getInstance().saveChannel( rootBean.getShowapi_res_body().getChannelList());
+                    setupViewPager(viewPager, rootBean.getShowapi_res_body().getChannelList());
+                }
+
             }
 
             @Override

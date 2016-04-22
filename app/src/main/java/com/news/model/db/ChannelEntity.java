@@ -1,11 +1,19 @@
 package com.news.model.db;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
 /**
  * Created by Administrator on 2016/4/19.
  */
+@DatabaseTable(tableName = "tbl_channels")
 public class ChannelEntity {
-    public String channelId;
 
+    @DatabaseField(generatedId = true)
+    public int id;
+    @DatabaseField(columnName = "channelId",canBeNull = false,unique =true)
+    public String channelId;
+    @DatabaseField(columnName = "name",canBeNull =false)
     public String name;
 
     public String getName() {

@@ -5,10 +5,10 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/4/19.
  */
-public class NewsChannelEntity {
+public class ListBean<T> {
     public int ret_code;
     public int totalNum;
-    public List<ChannelEntity> channelList;
+    public List<T> channelList;
 
     public int getTotalNum() {
         return totalNum;
@@ -18,11 +18,11 @@ public class NewsChannelEntity {
         this.totalNum = totalNum;
     }
 
-    public List<ChannelEntity> getChannelList() {
+    public List<T> getChannelList() {
         return channelList;
     }
 
-    public void setChannelList(List<ChannelEntity> channelList) {
+    public void setChannelList(List<T> channelList) {
         this.channelList = channelList;
     }
 

@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.news.model.db.ChannelEntity;
+import com.news.model.db.ImageUrls;
 import com.news.model.db.NewEntity;
 import com.news.util.base.LogUtils;
 
@@ -37,7 +39,8 @@ public class SQLiteHelper extends OrmLiteSqliteOpenHelper {
     private void versionCreate(ConnectionSource connSource) {
         try {
             TableUtils.createTableIfNotExists(connSource, NewEntity.class);
-
+            TableUtils.createTableIfNotExists(connSource, ImageUrls.class);
+            TableUtils.createTableIfNotExists(connSource, ChannelEntity.class);
         } catch (SQLException e) {
             LogUtils.i("创建数据库异常！");
             e.printStackTrace();

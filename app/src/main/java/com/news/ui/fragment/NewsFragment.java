@@ -22,13 +22,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.news.app.Constants;
 import com.news.db.dao.NewsDao;
+import com.news.model.db.ImageUrls;
 import com.news.model.db.NewEntity;
-import com.news.model.db.RootEntity;
+import com.news.model.db.PageRootBean;
 import com.news.net.R;
 import com.news.service.interfac.OnItemClickListener;
 import com.news.service.interfac.OnItemLongClickListener;
@@ -93,9 +93,9 @@ public class NewsFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtils.i(TAG, name + ":onCreate()");
         this.name= getArguments().getString("name");
         this.channelId= getArguments().getString("channelId");
-        LogUtils.i(TAG, name + ":onCreate()");
     }
 
 
@@ -103,7 +103,7 @@ public class NewsFragment extends Fragment{
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            LogUtils.i(TAG, name + ":setUserVisibleHint()");
+            LogUtils.i("setUserVisibleHint() isFirstLoad:"+isFirstLoad);
             if (isFirstLoad){
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -172,9 +172,7 @@ public class NewsFragment extends Fragment{
     public void onResume() {
         super.onResume();
         LogUtils.i(TAG, name + ":onResume()");
-
     }
-
 
     @Override
     public void onPause() {
@@ -199,21 +197,25 @@ public class NewsFragment extends Fragment{
     * @author：Administrator on 2016/1/4 16:02
     */
    public void initData(int page){
-      final List<NewEntity> newEntities= NewsDao.getInstance().findNewsByChannelId(channelId,page);
+       final List<NewEntity> newEntities= NewsDao.getInstance().findNewsByChannelId(channelId,page);
        if (ListUtils.isEmpty(newEntities)){
-           LogUtils.i("初始化网络请求:ss"+page);
+           LogUtils.i("初始化网络请求:"+page);
            loadData(page);
        }else{
            LogUtils.i("初始化数据库数据:"+page);
           new Handler().postDelayed(new Runnable() {
               @Override
               public void run() {
+                  for(int i=0;i<newEntities.size();i++){
+                      List<ImageUrls> imageUrlsList=NewsDao.getInstance().findImagesByNewsId(newEntities.get(i).getId());
+                      newEntities.get(i).setImageurls(imageUrlsList);
+                  }
                   contentlists.addAll(newEntities);
                   RecyclerViewStateUtils.setFooterViewState(mlist, LoadingFooter.State.Normal);
                   adapter.notifyDataSetChanged();
                   swipe_refresh_layout.setRefreshing(false);
               }
-          },1000);
+          },200);
        }
    }
 
@@ -231,7 +233,7 @@ public class NewsFragment extends Fragment{
         NetUtils.httpResquest(activity, url, param, Constants.HTTP_GET, new HttpDataCallBack() {
             @Override
             public void onStart() {
-                LogUtils.i(TAG,"开始加载数据："+name);
+                LogUtils.i(TAG, "开始加载数据：" + name);
             }
 
             @Override
@@ -242,11 +244,12 @@ public class NewsFragment extends Fragment{
 
             @Override
             public void onFinish() {
-                isFirstLoad=false;
+
             }
 
             @Override
             public void onFailed() {
+                isFirstLoad = true;
                 Log.i(TAG, "http onFail...");
             }
         });
@@ -259,9 +262,9 @@ public class NewsFragment extends Fragment{
      */
     private void displayUi(Object paramObject) {
         RecyclerViewStateUtils.setFooterViewState(mlist, LoadingFooter.State.Normal);
-        RootEntity<NewEntity> rootEntity= ApiUtils.parseNewsList(paramObject.toString(), NewEntity.class);
-        NewsDao.getInstance().saveAll(rootEntity.getShowapi_res_body().getPagebean().getContentlist());
+        PageRootBean<NewEntity> rootEntity= ApiUtils.parseNewsList(paramObject.toString(), NewEntity.class);
         List<NewEntity> newEntities=rootEntity.getShowapi_res_body().getPagebean().getContentlist();
+        NewsDao.getInstance().saveAll(newEntities);
         if (newEntities.size()>0) {
             contentlists.addAll(newEntities);
         }else{
@@ -280,12 +283,10 @@ public class NewsFragment extends Fragment{
             super.onLoadNextPage(view);
             LoadingFooter.State state = RecyclerViewStateUtils.getFooterViewState(mlist);
             if(state == LoadingFooter.State.Loading) {
-                Log.d("@Cundong", "the state is Loading, just wait..");
                 return;
             }
             initData(++page);
             RecyclerViewStateUtils.setFooterViewState(getActivity(), mlist, 20, page, LoadingFooter.State.Loading, null);
-
         }
     };
 
@@ -357,12 +358,9 @@ public class NewsFragment extends Fragment{
             }
 
             holder.tv_news_imageNum.setText("(" + size + ")");
-
             //设置背景
             holder.mView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
             holder.mView.setOnClickListener(this);
-
-
             holder.itemView.setTag(contentLists.get(position));
         }
 

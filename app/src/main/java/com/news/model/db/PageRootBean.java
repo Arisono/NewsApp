@@ -3,7 +3,7 @@ package com.news.model.db;
 /**
  * Created by Administrator on 2016/4/19.
  */
-public class RootEntity<T> {
+public class PageRootBean<T> {
     private int showapi_res_code;
     private String showapi_res_error;
     private PageBeanBody<T> showapi_res_body;
