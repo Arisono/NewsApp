@@ -118,7 +118,7 @@ public class NewsDao {
         int pageSize = 20;
         page = page - 1;
         long offset = page * pageSize;
-        long limit = offset + pageSize-1;
+        long limit = offset + pageSize;
 
         List<NewEntity> lists = new ArrayList<>();
         QueryBuilder<NewEntity, String> queryBuilder = newsDao.queryBuilder();
