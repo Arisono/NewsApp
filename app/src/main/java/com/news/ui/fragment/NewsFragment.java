@@ -109,7 +109,8 @@ public class NewsFragment extends Fragment{
                     @Override
                     public void run() {
                         swipe_refresh_layout.setRefreshing(true);
-                        initData(1);
+                        page=1;
+                        initData(page);
                     }
                 },100);
              }
@@ -148,7 +149,8 @@ public class NewsFragment extends Fragment{
                 // adapter.notifyDataSetChanged(); //clear this is create a bug for
                 //或者禁止滑動
                 swipe_refresh_layout.setRefreshing(true);
-                loadData(1);
+                page=1;
+                loadData(page);
             }
         });
 

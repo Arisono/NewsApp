@@ -33,6 +33,8 @@ import com.news.ui.fragment.NewsFragment;
 import com.news.util.base.ApiUtils;
 import com.news.util.base.ListUtils;
 import com.news.util.base.LogUtils;
+import com.news.util.base.ToastUtils;
+import com.news.util.cache.SDCardUtils;
 import com.news.util.net.HttpClientUtil;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
@@ -148,6 +150,11 @@ public class IndexActivity extends AppCompatActivity {
             case R.id.action_search:
                 loadToolBarSearch();
                 break;
+            case R.id.action_export_data:
+                String msg=SDCardUtils.exprotDataBase(this);
+                ToastUtils.showLong(getApplicationContext(),msg);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
