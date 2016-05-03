@@ -1,6 +1,7 @@
 package com.news.ui.activity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -11,21 +12,21 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.news.adapter.NewsFragmentAdapter;
 import com.news.app.Constants;
 import com.news.db.dao.NewsDao;
-import com.news.model.NewsChannelEntity;
 import com.news.model.db.ChannelEntity;
 import com.news.model.db.ListRootBean;
 import com.news.net.R;
@@ -257,9 +258,26 @@ public class IndexActivity extends AppCompatActivity {
         imgToolMic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 edtToolSearch.setText("");
 
+            }
+        });
+
+        edtToolSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                switch (actionId){
+                    case EditorInfo.IME_ACTION_GO:
+
+                         break;
+                    case EditorInfo.IME_ACTION_DONE:
+                         startActivity(new Intent(IndexActivity.this,MainSearchActivity.class));
+                         return true;
+                    case EditorInfo.IME_ACTION_NEXT:
+
+                        break;
+                }
+                return false;
             }
         });
     }

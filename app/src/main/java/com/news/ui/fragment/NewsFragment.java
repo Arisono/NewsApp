@@ -109,7 +109,6 @@ public class NewsFragment extends Fragment{
                     @Override
                     public void run() {
                         swipe_refresh_layout.setRefreshing(true);
-                        page=1;
                         initData(page);
                     }
                 },100);
@@ -274,6 +273,7 @@ public class NewsFragment extends Fragment{
             --page;
         }
         adapter.notifyDataSetChanged();
+        isFirstLoad=false;
         swipe_refresh_layout.setRefreshing(false);
     }
 
