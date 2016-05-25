@@ -136,7 +136,7 @@ public class ImageUtil {
      */
     public final static Bitmap compressBitmap(Bitmap bitmap, int quality,int reqsW, int reqsH) {
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();//放入内存
             bitmap.compress(Bitmap.CompressFormat.PNG, quality, baos);//压缩质量
             byte[] bts = baos.toByteArray();
             Bitmap res = compressBitmapWithByte(bts, reqsW, reqsH);//压缩尺寸
@@ -168,7 +168,7 @@ public class ImageUtil {
     /**
      * @功能:压缩指定filePath图片，并得到压缩后的图像
      * @author:Arisono
-     * @param:filePath
+     * @param:filePath:图片路径
      * @return: Bitmap
      */
     public static Bitmap compressBitmapWithfilePath(String filePath,int reqsW, int reqsH) {
