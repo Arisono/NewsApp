@@ -4,9 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.util.Log;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -150,6 +152,55 @@ public class ImageUtil {
 
 
     /**
+     * 压缩已存在的图片对象，并返回压缩后的图片(压缩质量，压缩尺寸函数)
+     * @param bitmap ：图片对象
+     * @param quality:1-100;100表示不质量压缩
+     * @param reqsW：压缩宽度
+     * @param reqsH：压缩高度
+     * @return Bitmap
+     */
+    public final static Bitmap compressBitmap(String path, int quality,int reqsW, int reqsH) {
+        Bitmap bitmap=compressBitmapWithFilePath(path,reqsW,reqsH);
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();//放入内存
+            bitmap.compress(Bitmap.CompressFormat.PNG, quality, baos);//压缩质量
+            byte[] bts = baos.toByteArray();
+           // Bitmap res = compressBitmapWithByte(bts, reqsW, reqsH);//压缩尺寸
+            Bitmap res=bytes2Bimap(bts);
+            baos.close();
+            return res;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return bitmap;
+        }
+    }
+
+
+    /**
+     * 压缩已存在的图片对象，并返回压缩后的图片文件(压缩质量，压缩尺寸函数)
+     * @param bitmap ：图片对象
+     * @param quality:1-100;100表示不质量压缩
+     * @param reqsW：压缩宽度
+     * @param reqsH：压缩高度
+     * @return Bitmap
+     */
+    public final static File compressBitmapToFile(String filePath, int quality,int reqsW, int reqsH) {
+        Bitmap bitmap=compressBitmapWithFilePath(filePath,reqsW,reqsH);
+        try {
+           // ByteArrayOutputStream baos = new ByteArrayOutputStream();//放入内存
+            File file=new File(filePath);
+            BufferedOutputStream baos = new BufferedOutputStream(new FileOutputStream(file));
+            bitmap.compress(Bitmap.CompressFormat.PNG, quality, baos);//压缩质量
+            baos.flush();
+            baos.close();
+            return file;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * 压缩指定byte[]图片，并得到压缩后的图像
      * @param bts
      * @param reqsW
@@ -171,12 +222,22 @@ public class ImageUtil {
      * @param:filePath:图片路径
      * @return: Bitmap
      */
-    public static Bitmap compressBitmapWithfilePath(String filePath,int reqsW, int reqsH) {
+    public static Bitmap compressBitmapWithFilePath(String filePath,int reqsW, int reqsH) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(filePath, options);
         options.inSampleSize =   calculateInSampleSize(options, reqsW, reqsH);
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(filePath, options);
+    }
+
+
+
+    public static Bitmap bytes2Bimap(byte[] b) {
+        if (b.length != 0) {
+            return BitmapFactory.decodeByteArray(b, 0, b.length);
+        } else {
+            return null;
+        }
     }
 }

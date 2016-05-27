@@ -7,6 +7,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 
 /**
  * 跟App相关的辅助类
+ * App信息相关工具类
  */
 public class AppUtils {
 
@@ -38,7 +39,7 @@ public class AppUtils {
      * @param context
      * @return 当前应用的版本名称
      */
-    public static String getVersionName(Context context) {
+    public static String getAppVersionName(Context context) {
         try {
             PackageManager packageManager = context.getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(
@@ -51,4 +52,14 @@ public class AppUtils {
         return null;
     }
 
+
+    /**
+     * @功能:获取qpp最大使用内存
+     * @author:Arisono
+     * @param:
+     * @return:
+     */
+    public static int getAppMaxMemory(){
+       return (int) (Runtime.getRuntime().maxMemory() / 1024);
+    }
 }

@@ -18,8 +18,6 @@ public class DeviceUtil {
 //    getSystemVersion()	获取当前系统的版本
 
 
-
-
     /**
      * 获取当前设置的电话号码
      */
@@ -30,6 +28,7 @@ public class DeviceUtil {
         NativePhoneNumber = telephonyManager.getLine1Number();
         return String.format("手机号: %s", NativePhoneNumber);
     }
+
     /**
      * IMSI是国际移动用户识别码的简称(International Mobile Subscriber Identity)
      * IMSI共有15位，其结构如下：
@@ -77,7 +76,6 @@ public class DeviceUtil {
         String mac = info.getMacAddress();
         return mac;
     }
-
 
 
     /**
