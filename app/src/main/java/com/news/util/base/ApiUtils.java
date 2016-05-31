@@ -22,25 +22,34 @@ public class ApiUtils {
     public static <T> PageRootBean<T> parseNewsList(String jsonData,Class<T> mClazz) {
         JSONObject root= JSON.parseObject(jsonData);
         JSONObject body=JSON.parseObject(jsonData).getJSONObject("showapi_res_body");
-        JSONObject page=JSON.parseObject(jsonData).getJSONObject("showapi_res_body").getJSONObject("pagebean");
-        String contentList=JSON.parseObject(jsonData).getJSONObject("showapi_res_body").getJSONObject("pagebean").getJSONArray("contentlist").toJSONString();
-        //实例化分页类
-        PageBean<T> pageBean=new PageBean<T>();
-        pageBean.setContentlist(JSON.parseArray(contentList, mClazz));//可能报错
-        pageBean.setAllNum(page.getIntValue("allNum"));
-        pageBean.setAllPages(page.getIntValue("allPages"));
-        pageBean.setCurrentPage(page.getIntValue("currentPage"));
-        pageBean.setMaxResult(page.getIntValue("maxResult"));
-        //实例化Body类
-        PageBeanBody<T> pageBeanBody=new PageBeanBody<T>();
-        pageBeanBody.setPagebean(pageBean);
-        pageBeanBody.setRet_code(body.getIntValue("ret_code"));
-        //实例化Root类
-        PageRootBean<T> rootEntity=new PageRootBean<T>();
-        rootEntity.setShowapi_res_body(pageBeanBody);
-        rootEntity.setShowapi_res_code(root.getIntValue("showapi_res_code"));
-        rootEntity.setShowapi_res_error(root.getString("showapi_res_error"));
-        return rootEntity;
+        if (body!=null&&!ObjectUtils.isEquals(body,"")){
+            JSONObject page=JSON.parseObject(jsonData).getJSONObject("showapi_res_body").getJSONObject("pagebean");
+            String contentList=JSON.parseObject(jsonData).getJSONObject("showapi_res_body").getJSONObject("pagebean").getJSONArray("contentlist").toJSONString();
+            //实例化分页类
+            PageBean<T> pageBean=new PageBean<T>();
+            pageBean.setContentlist(JSON.parseArray(contentList, mClazz));//可能报错
+            pageBean.setAllNum(page.getIntValue("allNum"));
+            pageBean.setAllPages(page.getIntValue("allPages"));
+            pageBean.setCurrentPage(page.getIntValue("currentPage"));
+            pageBean.setMaxResult(page.getIntValue("maxResult"));
+            //实例化Body类
+            PageBeanBody<T> pageBeanBody=new PageBeanBody<T>();
+            pageBeanBody.setPagebean(pageBean);
+            pageBeanBody.setRet_code(body.getIntValue("ret_code"));
+            //实例化Root类
+            PageRootBean<T> rootEntity=new PageRootBean<T>();
+            rootEntity.setShowapi_res_body(pageBeanBody);
+            rootEntity.setShowapi_res_code(root.getIntValue("showapi_res_code"));
+            rootEntity.setShowapi_res_error(root.getString("showapi_res_error"));
+            return rootEntity;
+
+        }else{
+            PageRootBean<T> rootEntity=new PageRootBean<T>();
+            rootEntity.setShowapi_res_body(null);
+            rootEntity.setShowapi_res_code(root.getIntValue("showapi_res_code"));
+            rootEntity.setShowapi_res_error(root.getString("showapi_res_error"));
+            return rootEntity;
+        }
     }
     
     

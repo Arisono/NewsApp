@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.news.adapter.SimpleAdapter;
 import com.news.app.Constants;
 import com.news.db.dao.NewsDao;
 import com.news.model.db.ImageUrls;
@@ -42,6 +43,7 @@ import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
 import com.news.widget.recyclerView.EndlessRecyclerOnScrollListener;
 import com.news.widget.recyclerView.HeaderAndFooterRecyclerViewAdapter;
+import com.news.widget.recyclerView.divider.DividerLine;
 import com.news.widget.recyclerView.footer.LoadingFooter;
 import com.news.widget.recyclerView.footer.RecyclerViewStateUtils;
 
@@ -63,7 +65,6 @@ public class NewsFragment extends Fragment{
 
     private String TAG="NewsFragment";
     public int page=1;
-
     @Bind(R.id.mlist)
     public RecyclerView mlist;
     private SimpleAdapter adapter;
@@ -77,7 +78,6 @@ public class NewsFragment extends Fragment{
     private Activity activity;
     private boolean isFirstLoad=true;
     public SearchView mSearchView;
-    private ImageLoaderWrapper mImageLoaderWrapper;
 
     @Nullable
     @Override
@@ -118,8 +118,6 @@ public class NewsFragment extends Fragment{
 
 
     public void initView(){
-        mImageLoaderWrapper= ImageLoaderFactory.getLoader();
-
         mlist.setLayoutManager(new LinearLayoutManager(mlist.getContext()));
         adapter=new SimpleAdapter(getActivity(),contentlists);
         adapter.setOnItemClickListener(new OnItemClickListener() {
@@ -132,6 +130,7 @@ public class NewsFragment extends Fragment{
                 activity.startActivity(intent);
             }
         });
+
         DividerLine dividerLine = new DividerLine(DividerLine.VERTICAL);
         dividerLine.setSize(1);
         dividerLine.setColor(0x00000000);
@@ -139,7 +138,6 @@ public class NewsFragment extends Fragment{
         mlist.addItemDecoration(dividerLine);
         mHeaderAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
         mlist.setAdapter(mHeaderAndFooterRecyclerViewAdapter);
-
 
         swipe_refresh_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -225,8 +223,8 @@ public class NewsFragment extends Fragment{
         String url=Constants.API_NEWS;
         String datetime=new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         final Map<String,Object> param=new HashMap<>();
-        param.put("showapi_appid", "12041");
-        param.put("showapi_sign", "67f7892db890407f95cdf39f870b1234");
+        param.put("showapi_appid", Constants.NEWS_SHOWAPI_APPID);
+        param.put("showapi_sign", Constants.NEWS_SHOWAPI_SIGN);
         param.put("showapi_timestamp", datetime);
         param.put("channelId", channelId);
         param.put("page",count);
@@ -292,265 +290,12 @@ public class NewsFragment extends Fragment{
         }
     };
 
-    /**
-     * @desc:RecyclerView adapter
-     * @author：Administrator on 2016/1/5 15:30
-     */
-    public class SimpleAdapter extends  RecyclerView.Adapter<SimpleAdapter.ViewHolder> implements View.OnClickListener,View.OnLongClickListener {
-
-        List<NewEntity> contentLists;
-        private final TypedValue mTypedValue = new TypedValue();
-        private int mBackground;
-
-        private OnItemClickListener onItemClickListener;
-        private OnItemLongClickListener onItemLongClickListener;
-
-        SimpleAdapter(Context context,
-                      List<NewEntity> items){
-            context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
-            mBackground = mTypedValue.resourceId;
-            this.contentLists=items;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_item_news,parent,false);
-            view.setBackgroundResource(mBackground);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.tv_news_title.setText(contentLists.get(position).getTitle());
-            holder.tv_news_source.setText(contentLists.get(position).getSource());
-            holder.tv_news_time.setText(contentLists.get(position).getPubDate());
-            holder.tv_news_desc.setText(contentLists.get(position).getDesc());
-            int size=contentLists.get(position).getImageurls().size();
-            if (size==1){
-                ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
-                displayOption.loadingResId = R.mipmap.img_default;
-                displayOption.loadErrorResId = R.mipmap.img_error;
-                mImageLoaderWrapper.displayImage(holder.iv_news_bigimage, contentLists.get(position).getImageurls().get(0).getUrl(), displayOption);
-                holder.ll_image_third.setVisibility(View.GONE);
-                holder.ll_image_one.setVisibility(View.VISIBLE);
-                holder.iv_news_leftimage.setVisibility(View.GONE);
-            }else if(size==3){
-                ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
-                displayOption.loadingResId = R.mipmap.img_default;
-                displayOption.loadErrorResId = R.mipmap.img_error;
-                mImageLoaderWrapper.displayImage(holder.iv_news_oneimage, contentLists.get(position).getImageurls().get(0).getUrl(), displayOption);
-                mImageLoaderWrapper.displayImage(holder.iv_news_twoimage, contentLists.get(position).getImageurls().get(1).getUrl(), displayOption);
-                mImageLoaderWrapper.displayImage(holder.iv_news_thirdimage, contentLists.get(position).getImageurls().get(2).getUrl(), displayOption);
-                holder.ll_image_third.setVisibility(View.VISIBLE);
-                holder.ll_image_one.setVisibility(View.GONE);
-                holder.iv_news_leftimage.setVisibility(View.GONE);
-            }else if (size==2){
-                ImageLoaderWrapper.DisplayOption displayOption = new ImageLoaderWrapper.DisplayOption();
-                displayOption.loadingResId = R.mipmap.img_default;
-                displayOption.loadErrorResId = R.mipmap.img_error;
-                mImageLoaderWrapper.displayImage(holder.iv_news_bigimage, contentLists.get(position).getImageurls().get(0).getUrl(), displayOption);
-                holder.ll_image_third.setVisibility(View.GONE);
-                holder.ll_image_one.setVisibility(View.VISIBLE);
-                holder.iv_news_leftimage.setVisibility(View.GONE);
-            }else{
-                //清空图片
-                holder.ll_image_third.setVisibility(View.GONE);
-                holder.ll_image_one.setVisibility(View.GONE);
-                holder.iv_news_leftimage.setVisibility(View.GONE);
-            }
-
-            holder.tv_news_imageNum.setText("(" + size + ")");
-            //设置背景
-            holder.mView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-            holder.mView.setOnClickListener(this);
-            holder.itemView.setTag(contentLists.get(position));
-        }
-
-        @Override
-        public int getItemCount() {
-            return contentLists==null?0:contentLists.size();
-        }
-
-        @Override
-        public void onClick(View v) {
-            Log.i(TAG,"适配器点击调用"+onItemClickListener);
-           if (onItemClickListener!=null){
-               onItemClickListener.onItemClick(v,v.getTag());
-           }
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return super.getItemId(position);
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            return false;
-        }
-
-        public void setOnItemClickListener(OnItemClickListener listener){
-            this.onItemClickListener=listener;
-        }
-
-        public void setOnItemLongClickListener(OnItemLongClickListener listener){
-           this.onItemLongClickListener=listener;
-        }
-
-        public class ViewHolder extends  RecyclerView.ViewHolder {
-            public final View mView;
-            public final TextView tv_news_title;
-            public final TextView tv_news_desc;
-            public final TextView tv_news_time;
-            public final TextView tv_news_source;
-            public final TextView tv_news_imageNum;
-            //third image
-            public final ImageView iv_news_oneimage;
-            public final ImageView iv_news_twoimage;
-            public final ImageView iv_news_thirdimage;
-            public final ImageView iv_news_bigimage;
-            public final ImageView iv_news_leftimage;
-
-            public final LinearLayout ll_image_third;
-            public final LinearLayout ll_image_one;
-
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                mView=itemView;
-                tv_news_title= (TextView) itemView.findViewById(R.id.tv_news_title);
-                tv_news_desc= (TextView) itemView.findViewById(R.id.tv_news_desc);
-                tv_news_time= (TextView) itemView.findViewById(R.id.tv_news_time);
-                tv_news_source= (TextView) itemView.findViewById(R.id.tv_news_source);
-                tv_news_imageNum= (TextView) itemView.findViewById(R.id.tv_news_imageNum);
-
-                iv_news_bigimage= (ImageView) itemView.findViewById(R.id.iv_big_one);
-                iv_news_leftimage= (ImageView) itemView.findViewById(R.id.iv_left_image);
-                iv_news_oneimage= (ImageView) itemView.findViewById(R.id.iv_third_one);
-                iv_news_twoimage= (ImageView) itemView.findViewById(R.id.iv_third_two);
-                iv_news_thirdimage= (ImageView) itemView.findViewById(R.id.iv_third_third);
-
-                ll_image_third= (LinearLayout) itemView.findViewById(R.id.ll_image_third);
-                ll_image_one= (LinearLayout) itemView.findViewById(R.id.ll_image_one);
-            }
-        }
-    }
 
 
 
 
 
-    public class DividerLine extends RecyclerView.ItemDecoration{
-        /**
-         * 水平方向
-         */
-        public static final int HORIZONTAL = LinearLayoutManager.HORIZONTAL;
 
-        /**
-         * 垂直方向
-         */
-        public static final int VERTICAL = LinearLayoutManager.VERTICAL;
 
-        // 画笔
-        private Paint paint;
-
-        // 布局方向
-        private int orientation;
-        // 分割线颜色
-        private int color;
-        // 分割线尺寸
-        private int size;
-
-        public DividerLine() {
-            this(VERTICAL);
-        }
-       /* public DividerLine(int space) {
-            this.space = space;
-        }*/
-        public DividerLine(int orientation) {
-            this.orientation = orientation;
-
-            paint = new Paint();
-        }
-
-        @Override
-        public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
-            super.onDrawOver(c, parent, state);
-
-            if (orientation == VERTICAL) {
-                drawHorizontal(c, parent);
-            } else {
-                drawVertical(c, parent);
-            }
-        }
-
-        /**
-         * 设置分割线颜色
-         *
-         * @param color 颜色
-         */
-        public void setColor(int color) {
-            this.color = color;
-            paint.setColor(color);
-        }
-
-        /**
-         * 设置分割线尺寸
-         *
-         * @param size 尺寸
-         */
-        public void setSize(int size) {
-            this.size = size;
-        }
-
-        /**
-         * 设置分割线尺寸
-         *
-         * @param size 尺寸
-         */
-        public void setSpace(int height) {
-            this.space = height;
-        }
-
-        // 绘制垂直分割线
-        protected void drawVertical(Canvas c, RecyclerView parent) {
-            final int top = parent.getPaddingTop();
-            final int bottom = parent.getHeight() - parent.getPaddingBottom();
-
-            final int childCount = parent.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                final View child = parent.getChildAt(i);
-                final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-                final int left = child.getRight() + params.rightMargin;
-                final int right = left + size;
-
-                c.drawRect(left, top, right, bottom, paint);
-            }
-        }
-
-        // 绘制水平分割线
-        protected void drawHorizontal(Canvas c, RecyclerView parent) {
-            final int left = parent.getPaddingLeft();
-            final int right = parent.getWidth() - parent.getPaddingRight();
-
-            final int childCount = parent.getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                final View child = parent.getChildAt(i);
-                final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-                final int top = child.getBottom() + params.bottomMargin;
-                final int bottom = top + size;
-
-                c.drawRect(left, top, right, bottom, paint);
-            }
-        }
-
-        private int space;
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            if(parent.getChildPosition(view) != 0)
-                outRect.top = space;
-        }
-    }
 
 }

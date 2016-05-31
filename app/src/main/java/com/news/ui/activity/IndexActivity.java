@@ -32,6 +32,7 @@ import com.news.model.db.ListRootBean;
 import com.news.net.R;
 import com.news.ui.fragment.NewsFragment;
 import com.news.util.base.ApiUtils;
+import com.news.util.base.KeyBoardUtils;
 import com.news.util.base.ListUtils;
 import com.news.util.base.LogUtils;
 import com.news.util.base.ToastUtils;
@@ -104,15 +105,15 @@ public class IndexActivity extends AppCompatActivity {
             setupViewPager(viewPager, channelEntities);
         }else{
             LogUtils.i("频道取网络...");
-        Logger.init("IndexActivity").setLogLevel(LogLevel.FULL);
-        String url=Constants.API_NEWS;
-        String datetime=new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        final Map<String,Object> param=new HashMap<>();
-        param.put("showapi_appid", "12041");
-        param.put("showapi_sign", "67f7892db890407f95cdf39f870b1234");
-        param.put("showapi_timestamp", datetime);
-        url=Constants.API_NEWS_CHANNEL;
-        httpResquest(url, param);
+            Logger.init("IndexActivity").setLogLevel(LogLevel.FULL);
+            String url=Constants.API_NEWS;
+            String datetime=new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+            final Map<String,Object> param=new HashMap<>();
+            param.put("showapi_appid", Constants.NEWS_SHOWAPI_APPID);
+            param.put("showapi_sign",Constants.NEWS_SHOWAPI_SIGN);
+            param.put("showapi_timestamp", datetime);
+            url=Constants.API_NEWS_CHANNEL;
+            httpResquest(Constants.API_NEWS_CHANNEL, param);
         }
     }
 
@@ -238,14 +239,15 @@ public class IndexActivity extends AppCompatActivity {
 
         edtToolSearch.setHint("输入您感兴趣的内容...");
 
+
         final Dialog toolbarSearchDialog = new Dialog(IndexActivity.this, R.style.MaterialSearch);
         toolbarSearchDialog.setContentView(view);
-        toolbarSearchDialog.setCancelable(false);
+       // toolbarSearchDialog.setCancelable(false);
         toolbarSearchDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         toolbarSearchDialog.getWindow().setGravity(Gravity.BOTTOM);
         toolbarSearchDialog.show();
 
-        toolbarSearchDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+       // toolbarSearchDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
 
         imgToolBack.setOnClickListener(new View.OnClickListener() {
@@ -271,7 +273,10 @@ public class IndexActivity extends AppCompatActivity {
 
                          break;
                     case EditorInfo.IME_ACTION_DONE:
-                         startActivity(new Intent(IndexActivity.this,MainSearchActivity.class));
+//                         KeyBoardUtils.closeKeybord(edtToolSearch, toolbarSearchDialog.getContext());
+                         Intent intent= new Intent(IndexActivity.this,MainSearchActivity.class);
+                         intent.putExtra("value",v.getText().toString());
+                         startActivity(intent);
                          return true;
                     case EditorInfo.IME_ACTION_NEXT:
 

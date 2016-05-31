@@ -21,10 +21,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TAG=initTag();
         LogUtils.i(TAG, "onCreate()");
         ct=this;
         activity=this;
-        TAG=initTag();
         initView();
         initData();
     }

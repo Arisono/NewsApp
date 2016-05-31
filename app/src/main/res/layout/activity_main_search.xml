@@ -6,4 +6,10 @@
     tools:context="com.news.ui.activity.MainSearchActivity">
     <include layout="@layout/include_toolbar_base"/>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:background="@null" />
 </RelativeLayout>

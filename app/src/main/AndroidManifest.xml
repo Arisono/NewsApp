@@ -30,6 +30,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.news.ui.activity.MainSearchActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="orientation|keyboardHidden"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
