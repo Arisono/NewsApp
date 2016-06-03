@@ -31,10 +31,10 @@
         android:gravity="center"
         android:visibility="gone"/>
 
-    <LinearLayout
+ <!--   <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"></LinearLayout>
+        android:layout_gravity="right"></LinearLayout>-->
 
 </LinearLayout>

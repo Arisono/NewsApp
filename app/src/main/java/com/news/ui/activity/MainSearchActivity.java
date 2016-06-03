@@ -19,6 +19,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -63,6 +64,8 @@ public class MainSearchActivity extends BaseActivity {
     public Toolbar toolbar;
     @Bind(R.id.mlist)
     public RecyclerView mlist;
+    @Bind(R.id.progressBar)
+    public ProgressBar progressBar;
 
     public int page=1;
     private String value;
@@ -87,19 +90,19 @@ public class MainSearchActivity extends BaseActivity {
          getSupportActionBar().setHomeButtonEnabled(true);
          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case android.R.id.home:
-                        onBackPressed();
-                        break;
-                    default:
-                        break;
-                }
-                return true;
-            }
-        });
+//         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case android.R.id.home:
+//                        onBackPressed();
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
         initRecyclerView();
     }
 
@@ -109,6 +112,7 @@ public class MainSearchActivity extends BaseActivity {
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, Object object) {
+                mSearchView.clearFocus();
                 NewEntity data = (NewEntity) object;
                 Intent intent = new Intent(activity, BaseWebActivity.class);
                 intent.putExtra("url", data.getLink());
@@ -146,7 +150,6 @@ public class MainSearchActivity extends BaseActivity {
         mEdit = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
         mEdit.setText(value);
         mEdit.setSelection(value.length());
-
         mSearchView.setQueryHint("输入您感兴趣的...");
 
        final LinearLayout search_edit_frame= (LinearLayout) mSearchView.findViewById(R.id.search_edit_frame);
@@ -173,6 +176,7 @@ public class MainSearchActivity extends BaseActivity {
                  /*判断是否是“GO”键*/
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     /*隐藏软键盘*/
+
                     mSearchView.clearFocus();
                     search_edit_frame.setPressed(false);
                     KeyBoardUtils.closeKeybord(mEdit, ct);
@@ -181,6 +185,7 @@ public class MainSearchActivity extends BaseActivity {
                         contentlists.clear();
                         value = v.getText().toString();
                         page = 1;
+                        progressBar.setVisibility(View.VISIBLE);
                         resqustData(page);
                     }
                     return true;
@@ -214,6 +219,7 @@ public class MainSearchActivity extends BaseActivity {
      * @return:
      */
     public void resqustData(int count){
+
         String url= Constants.API_NEWS;
         String datetime=new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         final Map<String,Object> param=new HashMap<>();
@@ -233,6 +239,7 @@ public class MainSearchActivity extends BaseActivity {
             public void processData(Object paramObject, boolean paramBoolean) {
               Log.i("Arison", "MainSearchActivity:processData:124:" + JSON.toJSONString(paramObject));
                 displayUi(paramObject);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override

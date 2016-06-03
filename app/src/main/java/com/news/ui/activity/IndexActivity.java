@@ -223,7 +223,7 @@ public class IndexActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+    Dialog toolbarSearchDialog;
     /**
      * @desc:加载搜索框
      * @author：Administrator on 2016/4/15 15:50
@@ -239,52 +239,58 @@ public class IndexActivity extends AppCompatActivity {
 
         edtToolSearch.setHint("输入您感兴趣的内容...");
 
+        if (toolbarSearchDialog==null){
+            toolbarSearchDialog = new Dialog(IndexActivity.this, R.style.MaterialSearch);
+            toolbarSearchDialog.setContentView(view);
+            // toolbarSearchDialog.setCancelable(false);
+            toolbarSearchDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            toolbarSearchDialog.getWindow().setGravity(Gravity.BOTTOM);
+            toolbarSearchDialog.show();
 
-        final Dialog toolbarSearchDialog = new Dialog(IndexActivity.this, R.style.MaterialSearch);
-        toolbarSearchDialog.setContentView(view);
-       // toolbarSearchDialog.setCancelable(false);
-        toolbarSearchDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        toolbarSearchDialog.getWindow().setGravity(Gravity.BOTTOM);
-        toolbarSearchDialog.show();
-
-       // toolbarSearchDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            // toolbarSearchDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
 
-        imgToolBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toolbarSearchDialog.dismiss();
-            }
-        });
-
-        imgToolMic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                edtToolSearch.setText("");
-
-            }
-        });
-
-        edtToolSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                switch (actionId){
-                    case EditorInfo.IME_ACTION_GO:
-
-                         break;
-                    case EditorInfo.IME_ACTION_DONE:
-//                         KeyBoardUtils.closeKeybord(edtToolSearch, toolbarSearchDialog.getContext());
-                         Intent intent= new Intent(IndexActivity.this,MainSearchActivity.class);
-                         intent.putExtra("value",v.getText().toString());
-                         startActivity(intent);
-                         return true;
-                    case EditorInfo.IME_ACTION_NEXT:
-
-                        break;
+            imgToolBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    toolbarSearchDialog.dismiss();
                 }
-                return false;
-            }
-        });
+            });
+
+            imgToolMic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    edtToolSearch.setText("");
+
+                }
+            });
+
+            edtToolSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    switch (actionId){
+                        case EditorInfo.IME_ACTION_GO:
+
+                            break;
+                        case EditorInfo.IME_ACTION_DONE:
+
+                            //KeyBoardUtils.closeKeybord(edtToolSearch,IndexActivity.this);
+                            Intent intent= new Intent(IndexActivity.this,MainSearchActivity.class);
+                            intent.putExtra("value", v.getText().toString());
+                           startActivityForResult(intent,RESULT_OK);
+                            toolbarSearchDialog.dismiss();
+                            return true;
+                        case EditorInfo.IME_ACTION_NEXT:
+
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }else{
+            toolbarSearchDialog.show();
+        }
+
     }
 
 }
