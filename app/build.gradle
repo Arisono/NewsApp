@@ -30,5 +30,6 @@ dependencies {
     compile 'com.orhanobut:logger:1.8'
 
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
+    compile 'me.gujun.android.taggroup:library:1.4@aar'
 
 }

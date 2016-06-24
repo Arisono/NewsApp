@@ -223,6 +223,7 @@ public class IndexActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     Dialog toolbarSearchDialog;
     /**
      * @desc:加载搜索框
