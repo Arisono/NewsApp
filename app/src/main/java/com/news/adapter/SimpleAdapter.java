@@ -24,8 +24,8 @@ import com.news.util.imageloader.ImageLoaderWrapper;
 
 import java.util.List;
 
-/**
- * @desc:RecyclerView adapter
+/** 主界面RecyclerView适配器
+ * @desc:RecyclerView adapter  
  * @author：Administrator on 2016/1/5 15:30
  */
 public class SimpleAdapter extends  RecyclerView.Adapter<SimpleAdapter.ViewHolder> implements View.OnClickListener,View.OnLongClickListener {

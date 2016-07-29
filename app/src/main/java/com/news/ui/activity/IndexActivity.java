@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.news.adapter.DrawerAdapter;
 import com.news.adapter.NewsFragmentAdapter;
 import com.news.app.Constants;
 import com.news.db.dao.NewsDao;
@@ -54,6 +55,8 @@ import butterknife.ButterKnife;
 
 public class IndexActivity extends AppCompatActivity {
     private String TAG="IndexActivity";
+    
+    
     @Bind(R.id.tabs)
     public TabLayout tabLayout;
     @Bind(R.id.viewpager)
@@ -62,7 +65,15 @@ public class IndexActivity extends AppCompatActivity {
     public Toolbar toolbar;
     @Bind(R.id.fab)
     public FloatingActionButton fab;
+    
+    @Bind(R.id.menu_drawer)
+    public ListView mDrawerList;
+    View drawerHeaderLayout;
+    
     private SearchView mSearchView;
+    
+    //适配器
+    private DrawerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
