@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Drawer-->
+    <color name="window_background">#FFF5F5F5</color>
     <!--Material Colors-->
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#727272</color>

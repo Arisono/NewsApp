@@ -60,6 +60,7 @@
         android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
         android:id="@+id/left_drawer"
+        android:background="#eeeeee"
         android:layout_gravity="start|left" >
         <!-- style="@android:style/Theme.Holo.Light"-->
         <ListView
@@ -69,7 +70,6 @@
             android:layout_above="@+id/divider1"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="#ffffff"
             android:choiceMode="singleChoice"
             android:dividerHeight="0dip"
             android:scrollbars="none"/>
@@ -82,8 +82,9 @@
             android:background="@android:color/transparent"
             android:layout_above="@+id/ftpbutton"
             android:id="@+id/divider1"></ImageView>
-          <!--页脚  设置按钮-->
-        <RelativeLayout
+        <!---->
+          <!--  设置按钮-->
+        <LinearLayout
             android:id="@+id/settingsbutton"
             android:layout_width="fill_parent"
             android:layout_height="48dp"
@@ -93,9 +94,11 @@
             android:paddingStart="16dp"
             android:layout_alignParentBottom="true"
             android:background="#eeeeee"
+            android:orientation="horizontal"
+            android:weightSum="2"
             android:clickable="true">
 
-            <ImageView
+          <!--  <ImageView
                 android:id="@+id/settingicon"
                 android:layout_width="24dp"
                 android:layout_height="48dp"
@@ -107,35 +110,51 @@
                 android:paddingBottom="12dp"
                 android:paddingTop="12dp"
                 android:src="@drawable/ic_settings_grey600_48dp"
-                android:contentDescription="@string/icon" />
+                android:contentDescription="@string/icon" />-->
 
             <TextView
-                android:id="@+id/settingtext"
-                android:layout_width="match_parent"
+            android:id="@+id/settingtext"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:text="@string/setting"
+            android:clickable="false"
+            android:textColor="@android:color/black"
+            android:gravity="center" />
+
+            <TextView
+                android:id="@+id/logout"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:layout_toEndOf="@+id/settingicon"
-                android:layout_toRightOf="@+id/settingicon"
+                android:layout_weight="1"
+                
                 android:textSize="14sp"
                 android:fontFamily="sans-serif-medium"
                 android:singleLine="true"
                 android:ellipsize="end"
-                android:text="@string/setting"
+                android:text="@string/logout"
                 android:clickable="false"
                 android:textColor="@android:color/black"
-                android:gravity="center_vertical" />
-        </RelativeLayout>
+                android:gravity="center" />
+        </LinearLayout>
 
+        
+        
         </com.news.widget.navigation.ScrimInsetsRelativeLayout>
 
-
+     <!--app:itemIconTint="?attr/colorPrimaryDark"
+        app:itemTextColor="?attr/colorPrimaryDark"-->
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_right"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        app:headerLayout="@layout/nav_header"
-        app:itemIconTint="#333"
-        app:itemTextColor="#333"
-        app:menu="@menu/navigation_drawer_items" />
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/drawerheader"
+        app:menu="@menu/navigation_drawer_items"
+        />
 </android.support.v4.widget.DrawerLayout>

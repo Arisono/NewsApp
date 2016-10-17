@@ -32,5 +32,6 @@
         android:fontFamily="sans-serif-medium"
         android:gravity="center_vertical"
         android:singleLine="true"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:text="111" />
 </RelativeLayout>

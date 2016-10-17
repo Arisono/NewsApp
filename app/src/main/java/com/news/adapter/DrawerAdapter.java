@@ -30,7 +30,7 @@ public class DrawerAdapter extends ArrayAdapter<Item>{
     private Activity activity;
     private SparseBooleanArray myChecked = new SparseBooleanArray();//选中状态
     
-    public DrawerAdapter(Context context, int resource,ArrayList<Item> values,
+    public DrawerAdapter(Context context, ArrayList<Item> values,
                          Activity activity) {
         super(context, R.layout.item_draw_errow,values);
         this.context=context;

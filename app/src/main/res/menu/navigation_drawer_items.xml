@@ -1,20 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="all">
+    <group >
         <item
             android:id="@+id/navItem1"
+            android:icon="@drawable/ic_left_menu_music"
+            android:checkable="true"
+            
             android:title="主页"/>
         <item
+            android:id="@+id/navItem6"
+            android:icon="@drawable/ic_left_menu_music"
+            android:checkable="true"
+            android:title="消息"/>
+        <item
             android:id="@+id/navItem2"
+            android:icon="@drawable/ic_left_menu_music"
+            android:checkable="true"
             android:title="新闻"/>
         <item
             android:id="@+id/navItem3"
+            android:icon="@drawable/ic_left_menu_music"
+            android:checkable="true"
             android:title="音乐"/>
         <item
             android:id="@+id/navItem4"
+            android:icon="@drawable/ic_left_menu_music"
+            android:checkable="true"
             android:title="视频"/>
         <item
             android:id="@+id/navItem5"
+            android:checkable="true"
+            android:icon="@drawable/ic_left_menu_music"
             android:title="图片"/>
+        <item
+        android:id="@+id/navItem7"
+        android:checkable="true"
+        android:icon="@drawable/ic_left_menu_music"
+        android:title="图片"/>
+        <item
+            android:id="@+id/navItem8"
+            android:checkable="true"
+            android:icon="@drawable/ic_left_menu_music"
+            android:title="图片"/>
+        <item
+            android:id="@+id/navItem9"
+            android:checkable="true"
+            android:icon="@drawable/ic_left_menu_music"
+            android:title="图片"/>
+      
     </group>
+    <item android:title="应用中心">
+        <menu >
+            <item
+                android:checkable="true"
+                android:icon="@drawable/ic_left_menu_music"
+                android:title="设置"/>
+            <item
+                android:checkable="true"
+                android:icon="@drawable/ic_left_menu_music"
+                android:title="退出应用"/>
+        </menu>
+    </item>
 </menu>

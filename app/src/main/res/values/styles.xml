@@ -8,10 +8,11 @@
         <!--remove this action bar-->
         <item name="windowActionBar">false</item>
     </style>
-
-    <style name="AppTheme.NoActionBar">
+    <!--indexActivity-->
+    <style name="AppTheme.NoActionBar" >
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+  
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -27,4 +28,10 @@
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:backgroundDimAmount">1.0</item>
     </style>
+
+
+
+   
+
+    
 </resources>

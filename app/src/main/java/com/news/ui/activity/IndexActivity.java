@@ -4,9 +4,12 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -16,8 +19,8 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,12 +31,13 @@ import com.news.adapter.DrawerAdapter;
 import com.news.adapter.NewsFragmentAdapter;
 import com.news.app.Constants;
 import com.news.db.dao.NewsDao;
+import com.news.model.EntryItem;
 import com.news.model.db.ChannelEntity;
 import com.news.model.db.ListRootBean;
+import com.news.model.interfac.Item;
 import com.news.net.R;
 import com.news.ui.fragment.NewsFragment;
 import com.news.util.base.ApiUtils;
-import com.news.util.base.KeyBoardUtils;
 import com.news.util.base.ListUtils;
 import com.news.util.base.LogUtils;
 import com.news.util.base.ToastUtils;
@@ -41,10 +45,13 @@ import com.news.util.cache.SDCardUtils;
 import com.news.util.net.HttpClientUtil;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
+import com.news.widget.navigation.ScrimInsetsRelativeLayout;
+import com.news.widget.views.RoundedImageView;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +59,7 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class IndexActivity extends AppCompatActivity {
     private String TAG="IndexActivity";
@@ -65,15 +73,28 @@ public class IndexActivity extends AppCompatActivity {
     public Toolbar toolbar;
     @Bind(R.id.fab)
     public FloatingActionButton fab;
-    
-    @Bind(R.id.menu_drawer)
-    public ListView mDrawerList;
-    View drawerHeaderLayout;
-    
     private SearchView mSearchView;
     
-    //适配器
-    private DrawerAdapter adapter;
+    @Bind(R.id.settingsbutton)
+    public LinearLayout mSettingsbutton;
+
+    public RoundedImageView profile_pic;
+  
+
+    //left Drawer
+    @Bind(R.id.drawerLayout)
+    public DrawerLayout mDrawerLayout;
+    @Bind(R.id.left_drawer)
+    public ScrimInsetsRelativeLayout mDrawerLinear;
+    @Bind(R.id.menu_drawer)
+    public ListView mDrawerList;
+    public View drawerHeaderLayout;
+    
+    // right Drawer
+    @Bind(R.id.nav_right)
+    public NavigationView mRightDrawer;
+    
+    private DrawerAdapter adapter;//adapter
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +102,7 @@ public class IndexActivity extends AppCompatActivity {
         setContentView(R.layout.activity_index);
         ButterKnife.bind(this);
         initView();
+        initListener();
         initData();
     }
 
@@ -102,7 +124,55 @@ public class IndexActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        //init headerview
+        drawerHeaderLayout = getLayoutInflater().inflate(R.layout.drawerheader, null);
+        profile_pic= (RoundedImageView) drawerHeaderLayout.findViewById(R.id.profile_pic);
+        //add 
+        mDrawerList.addHeaderView(drawerHeaderLayout);//加头布局文件
 
+        updateLeftDrawer();
+      
+      
+        
+    }
+    
+    public void initListener(){
+        mRightDrawer.setNavigationItemSelectedListener(
+
+                new NavigationView.OnNavigationItemSelectedListener() {
+
+                    private MenuItem mPreMenuItem;
+
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        if (mPreMenuItem != null) mPreMenuItem.setChecked(false);
+                        menuItem.setChecked(true);
+                        mDrawerLayout.closeDrawers();
+                        mPreMenuItem = menuItem;
+                        return true;
+                    }
+                });
+    }
+    
+    
+    public void updateLeftDrawer(){
+        ArrayList<Item> list = new ArrayList<>();
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_news), "0", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_music)));
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_music), "1", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_video), "2", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_music)));
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "3", ContextCompat.getDrawable(this,R.drawable.ic_left_menu_video)));
+        adapter = new DrawerAdapter(this, list,IndexActivity.this);
+      
+
+        //创建一个功能数组  
+        String[] str=new String[]{"功能1","功能2","功能3","功能4","功能5","功能6","功能7","功能8","功能9","功能10","功能11"};
+        //给listView设置一个ArrayAdapter  
+        /**
+         * 第二个参数可以用Android系统提供的TextView,也可以自定一个TextView 
+         */
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, str);
+     
+        mDrawerList.setAdapter(adapter);
     }
 
     /**
@@ -304,5 +374,11 @@ public class IndexActivity extends AppCompatActivity {
         }
 
     }
+
+
+    @OnClick(R.id.settingsbutton) void submit() {
+      ToastUtils.show(IndexActivity.this,"设置",3000);
+    }
+    
 
 }

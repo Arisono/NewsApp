@@ -21,6 +21,14 @@
     <string name="list_footer_network_error">点击重新加载</string>
     <string name="list_footer_end">数据加载完毕！</string>
 
+    <!--left draw list menu-->
+    <string name="left_menu_news">新闻</string>
+    <string name="left_menu_music">音乐</string>
+    <string name="left_menu_video">视频</string>
+    <string name="left_menu_image">图片</string>
+    
+    <!--settting-->
     <string name="icon">NewsApp</string>
     <string name="setting">设置</string>
+    <string name="logout">退出应用</string>
 </resources>

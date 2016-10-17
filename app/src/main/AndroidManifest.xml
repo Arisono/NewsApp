@@ -25,9 +25,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--公共webview-->
         <activity
             android:name="com.news.ui.activity.BaseWebActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <!--查询新闻-->
         <activity
             android:name="com.news.ui.activity.MainSearchActivity"
             android:windowSoftInputMode="adjustUnspecified|stateHidden"
