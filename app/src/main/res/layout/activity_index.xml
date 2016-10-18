@@ -62,7 +62,7 @@
         android:id="@+id/left_drawer"
         android:background="#eeeeee"
         android:layout_gravity="start|left" >
-        <!-- style="@android:style/Theme.Holo.Light"-->
+
         <ListView
             android:id="@+id/menu_drawer"
             android:layout_width="@dimen/drawer_width"

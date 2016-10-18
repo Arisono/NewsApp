@@ -88,6 +88,7 @@ public class IndexActivity extends AppCompatActivity {
     public ScrimInsetsRelativeLayout mDrawerLinear;
     @Bind(R.id.menu_drawer)
     public ListView mDrawerList;
+    
     public View drawerHeaderLayout;
     
     // right Drawer
@@ -137,6 +138,7 @@ public class IndexActivity extends AppCompatActivity {
     }
     
     public void initListener(){
+        //右边侧滑监听
         mRightDrawer.setNavigationItemSelectedListener(
 
                 new NavigationView.OnNavigationItemSelectedListener() {
