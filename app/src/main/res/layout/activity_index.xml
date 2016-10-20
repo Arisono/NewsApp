@@ -70,6 +70,8 @@
             android:layout_above="@+id/divider1"
             android:layout_height="match_parent"
             android:layout_gravity="start"
+            android:background="#ffffff"
+            android:divider="#00000000"
             android:choiceMode="singleChoice"
             android:dividerHeight="0dip"
             android:scrollbars="none"/>
@@ -80,7 +82,7 @@
             android:paddingBottom="8dp"
             android:src="@color/white"
             android:background="@android:color/transparent"
-            android:layout_above="@+id/ftpbutton"
+            android:layout_above="@+id/settingsbutton"
             android:id="@+id/divider1"></ImageView>
         <!---->
           <!--  设置按钮-->

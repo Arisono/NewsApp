@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,9 +61,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class IndexActivity extends AppCompatActivity {
-    private String TAG="IndexActivity";
-    
-    
+    private String TAG = "IndexActivity";
+
+
     @Bind(R.id.tabs)
     public TabLayout tabLayout;
     @Bind(R.id.viewpager)
@@ -74,12 +73,12 @@ public class IndexActivity extends AppCompatActivity {
     @Bind(R.id.fab)
     public FloatingActionButton fab;
     private SearchView mSearchView;
-    
+
     @Bind(R.id.settingsbutton)
     public LinearLayout mSettingsbutton;
 
     public RoundedImageView profile_pic;
-  
+
 
     //left Drawer
     @Bind(R.id.drawerLayout)
@@ -88,13 +87,13 @@ public class IndexActivity extends AppCompatActivity {
     public ScrimInsetsRelativeLayout mDrawerLinear;
     @Bind(R.id.menu_drawer)
     public ListView mDrawerList;
-    
+
     public View drawerHeaderLayout;
-    
+
     // right Drawer
     @Bind(R.id.nav_right)
     public NavigationView mRightDrawer;
-    
+
     private DrawerAdapter adapter;//adapter
 
     @Override
@@ -111,7 +110,7 @@ public class IndexActivity extends AppCompatActivity {
      * @desc:initView
      * @author：Administrator on 2016/4/12 11:38
      */
-    public void initView(){
+    public void initView() {
         toolbar.setNavigationIcon(getResources().getDrawable(R.mipmap.icon_left_menu));
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("新闻");
@@ -127,17 +126,16 @@ public class IndexActivity extends AppCompatActivity {
         });
         //init headerview
         drawerHeaderLayout = getLayoutInflater().inflate(R.layout.drawerheader, null);
-        profile_pic= (RoundedImageView) drawerHeaderLayout.findViewById(R.id.profile_pic);
+        profile_pic = (RoundedImageView) drawerHeaderLayout.findViewById(R.id.profile_pic);
         //add 
         mDrawerList.addHeaderView(drawerHeaderLayout);//加头布局文件
 
         updateLeftDrawer();
-      
-      
-        
+
+
     }
-    
-    public void initListener(){
+
+    public void initListener() {
         //右边侧滑监听
         mRightDrawer.setNavigationItemSelectedListener(
 
@@ -155,25 +153,25 @@ public class IndexActivity extends AppCompatActivity {
                     }
                 });
     }
-    
-    
-    public void updateLeftDrawer(){
+
+
+    public void updateLeftDrawer() {
         ArrayList<Item> list = new ArrayList<>();
         list.add(new EntryItem(getResources().getString(R.string.left_menu_news), "0", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_music)));
         list.add(new EntryItem(getResources().getString(R.string.left_menu_music), "1", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
         list.add(new EntryItem(getResources().getString(R.string.left_menu_video), "2", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_music)));
-        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "3", ContextCompat.getDrawable(this,R.drawable.ic_left_menu_video)));
-        adapter = new DrawerAdapter(this, list,IndexActivity.this);
-      
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "3", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+        adapter = new DrawerAdapter(this, list, IndexActivity.this);
+
 
         //创建一个功能数组  
-        String[] str=new String[]{"功能1","功能2","功能3","功能4","功能5","功能6","功能7","功能8","功能9","功能10","功能11"};
+        // String[] str=new String[]{"功能1","功能2","功能3","功能4","功能5","功能6","功能7","功能8","功能9","功能10","功能11"};
         //给listView设置一个ArrayAdapter  
         /**
          * 第二个参数可以用Android系统提供的TextView,也可以自定一个TextView 
          */
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, str);
-     
+        //  ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, str);
+
         mDrawerList.setAdapter(adapter);
     }
 
@@ -181,21 +179,21 @@ public class IndexActivity extends AppCompatActivity {
      * @desc:
      * @author：Administrator on 2015/12/21 16:40
      */
-    public void initData(){
-        List<ChannelEntity> channelEntities= NewsDao.getInstance().findAllChannel();
-        if (!ListUtils.isEmpty(channelEntities)){
+    public void initData() {
+        List<ChannelEntity> channelEntities = NewsDao.getInstance().findAllChannel();
+        if (!ListUtils.isEmpty(channelEntities)) {
             LogUtils.i("频道取缓存...");
             setupViewPager(viewPager, channelEntities);
-        }else{
+        } else {
             LogUtils.i("频道取网络...");
             Logger.init("IndexActivity").setLogLevel(LogLevel.FULL);
-            String url=Constants.API_NEWS;
-            String datetime=new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-            final Map<String,Object> param=new HashMap<>();
+            String url = Constants.API_NEWS;
+            String datetime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+            final Map<String, Object> param = new HashMap<>();
             param.put("showapi_appid", Constants.NEWS_SHOWAPI_APPID);
-            param.put("showapi_sign",Constants.NEWS_SHOWAPI_SIGN);
+            param.put("showapi_sign", Constants.NEWS_SHOWAPI_SIGN);
             param.put("showapi_timestamp", datetime);
-            url=Constants.API_NEWS_CHANNEL;
+            url = Constants.API_NEWS_CHANNEL;
             httpResquest(Constants.API_NEWS_CHANNEL, param);
         }
     }
@@ -236,25 +234,25 @@ public class IndexActivity extends AppCompatActivity {
                 loadToolBarSearch();
                 break;
             case R.id.action_export_data:
-                String msg=SDCardUtils.exprotDataBase(this);
-                ToastUtils.showLong(getApplicationContext(),msg);
+                String msg = SDCardUtils.exprotDataBase(this);
+                ToastUtils.showLong(getApplicationContext(), msg);
                 break;
 
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupViewPager(ViewPager viewPager,List<ChannelEntity> channelList) {
+    private void setupViewPager(ViewPager viewPager, List<ChannelEntity> channelList) {
         NewsFragmentAdapter adapter = new NewsFragmentAdapter(getSupportFragmentManager());
-        if(!channelList.isEmpty()){
-             for(int i=0;i<channelList.size();i++){
-                 NewsFragment newsFragment=new NewsFragment();
-                 Bundle ags=new Bundle(2);
-                 ags.putString("name",channelList.get(i).getName());
-                 ags.putString("channelId",channelList.get(i).getChannelId());
-                 newsFragment.setArguments(ags);
-                 adapter.addFragment(newsFragment, channelList.get(i).getName());
-             }
+        if (!channelList.isEmpty()) {
+            for (int i = 0; i < channelList.size(); i++) {
+                NewsFragment newsFragment = new NewsFragment();
+                Bundle ags = new Bundle(2);
+                ags.putString("name", channelList.get(i).getName());
+                ags.putString("channelId", channelList.get(i).getChannelId());
+                newsFragment.setArguments(ags);
+                adapter.addFragment(newsFragment, channelList.get(i).getName());
+            }
         }
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
@@ -274,7 +272,7 @@ public class IndexActivity extends AppCompatActivity {
                 //NewsChannelEntity newsChannelEntity=JSON.parseObject(paramObject.toString(),NewsChannelEntity.class);
                 ListRootBean<ChannelEntity> rootBean = ApiUtils.parseChannelList(paramObject.toString(), ChannelEntity.class);
                 if (!ListUtils.isEmpty(rootBean.getShowapi_res_body().getChannelList())) {
-                    NewsDao.getInstance().saveChannel( rootBean.getShowapi_res_body().getChannelList());
+                    NewsDao.getInstance().saveChannel(rootBean.getShowapi_res_body().getChannelList());
                     setupViewPager(viewPager, rootBean.getShowapi_res_body().getChannelList());
                 }
 
@@ -299,15 +297,16 @@ public class IndexActivity extends AppCompatActivity {
     @Deprecated
     private void httpTask(String url, Map<String, Object> param) {
         try {
-         HttpClientUtil.Response response= HttpClientUtil.sendGetHeaderRequest(url, param, null);
-         Log.i(TAG, "httpclient:" + response.getStatusCode());
-         Log.i(TAG,"httpclient:"+response.getResponseText());
+            HttpClientUtil.Response response = HttpClientUtil.sendGetHeaderRequest(url, param, null);
+            Log.i(TAG, "httpclient:" + response.getStatusCode());
+            Log.i(TAG, "httpclient:" + response.getResponseText());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     Dialog toolbarSearchDialog;
+
     /**
      * @desc:加载搜索框
      * @author：Administrator on 2016/4/15 15:50
@@ -323,7 +322,7 @@ public class IndexActivity extends AppCompatActivity {
 
         edtToolSearch.setHint("输入您感兴趣的内容...");
 
-        if (toolbarSearchDialog==null){
+        if (toolbarSearchDialog == null) {
             toolbarSearchDialog = new Dialog(IndexActivity.this, R.style.MaterialSearch);
             toolbarSearchDialog.setContentView(view);
             // toolbarSearchDialog.setCancelable(false);
@@ -352,16 +351,16 @@ public class IndexActivity extends AppCompatActivity {
             edtToolSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    switch (actionId){
+                    switch (actionId) {
                         case EditorInfo.IME_ACTION_GO:
 
                             break;
                         case EditorInfo.IME_ACTION_DONE:
 
                             //KeyBoardUtils.closeKeybord(edtToolSearch,IndexActivity.this);
-                            Intent intent= new Intent(IndexActivity.this,MainSearchActivity.class);
+                            Intent intent = new Intent(IndexActivity.this, MainSearchActivity.class);
                             intent.putExtra("value", v.getText().toString());
-                           startActivityForResult(intent,RESULT_OK);
+                            startActivityForResult(intent, RESULT_OK);
                             toolbarSearchDialog.dismiss();
                             return true;
                         case EditorInfo.IME_ACTION_NEXT:
@@ -371,16 +370,17 @@ public class IndexActivity extends AppCompatActivity {
                     return false;
                 }
             });
-        }else{
+        } else {
             toolbarSearchDialog.show();
         }
 
     }
 
 
-    @OnClick(R.id.settingsbutton) void submit() {
-      ToastUtils.show(IndexActivity.this,"设置",3000);
+    @OnClick(R.id.settingsbutton)
+    void submit() {
+        ToastUtils.show(IndexActivity.this, "设置", 3000);
     }
-    
+
 
 }
