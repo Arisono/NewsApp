@@ -8,6 +8,7 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.news.model.EntryItem;
 import com.news.model.interfac.Item;
 import com.news.net.R;
+import com.news.util.base.DensityUtils;
 
 import java.util.ArrayList;
 
@@ -45,13 +47,17 @@ public class DrawerAdapter extends ArrayAdapter<Item>{
     public View getView(int position, View convertView, ViewGroup parent) {
         if (values.get(position).isSection()) {
             ImageView view = new ImageView(context);
-
+            view.setImageResource(R.color.divider);
+            view.setBackgroundColor(Color.WHITE);
+            view.setLayoutParams(new AbsListView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,  DensityUtils.dp2px(context,17)));
+            view.setPadding(0, DensityUtils.dp2px(context,8), 0, DensityUtils.dp2px(context, 8));
             return view;
         }else{
             View  view = inflater.inflate(R.layout.item_draw_errow, parent, false);
             final TextView txtTitle=(TextView) view.findViewById(R.id.firstline);
             final ImageView imageView=(ImageView) view.findViewById(R.id.icon);
-            
+
+            view.setBackgroundResource(R.drawable.safr_ripple_white);
             view.setOnClickListener(new View.OnClickListener() {
 
                 public void onClick(View p1) {

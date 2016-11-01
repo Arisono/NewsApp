@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Drawer-->
+    <color name="divider">#e0e0e0</color>
     <color name="window_background">#FFF5F5F5</color>
     <!--Material Colors-->
     <color name="primary_text">#212121</color>

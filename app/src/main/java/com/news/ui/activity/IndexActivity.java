@@ -44,6 +44,7 @@ import com.news.util.cache.SDCardUtils;
 import com.news.util.net.HttpClientUtil;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
+import com.news.widget.drawer.SectionItem;
 import com.news.widget.navigation.ScrimInsetsRelativeLayout;
 import com.news.widget.views.RoundedImageView;
 import com.orhanobut.logger.LogLevel;
@@ -161,16 +162,20 @@ public class IndexActivity extends AppCompatActivity {
         list.add(new EntryItem(getResources().getString(R.string.left_menu_music), "1", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
         list.add(new EntryItem(getResources().getString(R.string.left_menu_video), "2", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_music)));
         list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "3", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+        list.add(new SectionItem());
+
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "4", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "5", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+        list.add(new SectionItem());
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "4", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "5", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "4", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "5", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "4", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+        list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "5", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
+       
         adapter = new DrawerAdapter(this, list, IndexActivity.this);
-
-
-        //创建一个功能数组  
-        // String[] str=new String[]{"功能1","功能2","功能3","功能4","功能5","功能6","功能7","功能8","功能9","功能10","功能11"};
-        //给listView设置一个ArrayAdapter  
-        /**
-         * 第二个参数可以用Android系统提供的TextView,也可以自定一个TextView 
-         */
-        //  ArrayAdapter<String> adapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, str);
+        
 
         mDrawerList.setAdapter(adapter);
     }
