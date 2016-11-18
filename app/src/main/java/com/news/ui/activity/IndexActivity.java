@@ -19,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -39,6 +40,7 @@ import com.news.ui.fragment.NewsFragment;
 import com.news.util.base.ApiUtils;
 import com.news.util.base.ListUtils;
 import com.news.util.base.LogUtils;
+import com.news.util.base.SystemUtils;
 import com.news.util.base.ToastUtils;
 import com.news.util.cache.SDCardUtils;
 import com.news.util.net.HttpClientUtil;
@@ -118,6 +120,8 @@ public class IndexActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        SystemUtils.setSystemBarTint(this);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,9 +177,9 @@ public class IndexActivity extends AppCompatActivity {
         list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "5", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
         list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "4", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
         list.add(new EntryItem(getResources().getString(R.string.left_menu_image), "5", ContextCompat.getDrawable(this, R.drawable.ic_left_menu_video)));
-       
+
         adapter = new DrawerAdapter(this, list, IndexActivity.this);
-        
+
 
         mDrawerList.setAdapter(adapter);
     }
@@ -206,26 +210,7 @@ public class IndexActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_news, menu);
-        /*final MenuItem item = menu.findItem(R.id.action_search);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(item);
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (StringUtils.isEmpty(newText)) {
-                    tabLayout.setVisibility(View.VISIBLE);
-                } else {
-                    tabLayout.setVisibility(View.INVISIBLE);
-                    ToastUtils.show(IndexActivity.this, newText, 2000);
-                }
-                return true;
-            }
-        });*/
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -328,13 +313,15 @@ public class IndexActivity extends AppCompatActivity {
         edtToolSearch.setHint("输入您感兴趣的内容...");
 
         if (toolbarSearchDialog == null) {
-            toolbarSearchDialog = new Dialog(IndexActivity.this, R.style.MaterialSearch);
+            toolbarSearchDialog = new Dialog(IndexActivity.this, R.style.AppTheme);
             toolbarSearchDialog.setContentView(view);
             // toolbarSearchDialog.setCancelable(false);
             toolbarSearchDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             toolbarSearchDialog.getWindow().setGravity(Gravity.BOTTOM);
+            toolbarSearchDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
             toolbarSearchDialog.show();
-
+            toolbarSearchDialog.getWindow().getDecorView().setSystemUiVisibility(getWindow().getDecorView().getSystemUiVisibility());
+            toolbarSearchDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
             // toolbarSearchDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
 

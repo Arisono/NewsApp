@@ -17,8 +17,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.news.ui.activity.IndexActivity"
-            android:label="@string/title_activity_index"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:label="@string/title_activity_index">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,13 +27,12 @@
         <!--公共webview-->
         <activity
             android:name="com.news.ui.activity.BaseWebActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+           />
         <!--查询新闻-->
         <activity
             android:name="com.news.ui.activity.MainSearchActivity"
             android:windowSoftInputMode="adjustUnspecified|stateHidden"
-            android:configChanges="orientation|keyboardHidden"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:configChanges="orientation|keyboardHidden">
         </activity>
     </application>
 

@@ -7,11 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.news.net.R;
+import com.news.util.base.SystemUtils;
 import com.news.widget.ProgressWebView;
 
 import butterknife.Bind;
@@ -47,6 +47,7 @@ public class BaseWebActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        SystemUtils.setSystemBarTint(this);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -66,7 +67,7 @@ public class BaseWebActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_webview, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
 

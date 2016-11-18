@@ -1,23 +1,17 @@
 package com.news.ui.activity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,7 +20,6 @@ import com.alibaba.fastjson.JSON;
 import com.news.adapter.SimpleAdapter;
 import com.news.app.Constants;
 import com.news.base.activity.BaseActivity;
-import com.news.db.dao.NewsDao;
 import com.news.model.db.NewEntity;
 import com.news.model.db.PageRootBean;
 import com.news.net.R;
@@ -34,6 +27,7 @@ import com.news.service.interfac.OnItemClickListener;
 import com.news.util.base.ApiUtils;
 import com.news.util.base.KeyBoardUtils;
 import com.news.util.base.StringUtils;
+import com.news.util.base.SystemUtils;
 import com.news.util.base.ToastUtils;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
@@ -79,7 +73,7 @@ public class MainSearchActivity extends BaseActivity {
          setContentView(R.layout.activity_main_search);
          ButterKnife.bind(this);
 
-
+        SystemUtils.setSystemBarTint(this);
          Intent intent=getIntent();
          if (intent!=null){
              value=intent.getStringExtra("value");

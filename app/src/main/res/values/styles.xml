@@ -1,37 +1,23 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!--remove this action bar-->
         <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
     <!--indexActivity-->
-    <style name="AppTheme.NoActionBar" >
+    <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-  
     </style>
-
+    
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-     <!--dialog style-->
-    <!--<item name="android:windowBackground">@android:color/transparent</item> 透明背景-->
-    <style name="MaterialSearch" parent="@android:style/Theme.Dialog">
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowBackground">@android:color/white</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:backgroundDimAmount">1.0</item>
-    </style>
 
-
-
-   
-
-    
 </resources>

@@ -31,5 +31,7 @@ dependencies {
 
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
     compile 'me.gujun.android.taggroup:library:1.4@aar'
+    //沉浸栏
+    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
 
 }

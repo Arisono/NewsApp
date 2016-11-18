@@ -1,5 +1,13 @@
 package com.news.util.base;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
+import android.view.WindowManager;
+
+import com.readystatesoftware.systembartint.SystemBarTintManager;
+
 /**
  * SystemUtils
  *
@@ -35,5 +43,23 @@ public class SystemUtils {
     public static int getDefaultThreadPoolSize(int max) {
         int availableProcessors = 2 * Runtime.getRuntime().availableProcessors() + 1;
         return availableProcessors > max ? max : availableProcessors;
+    }
+    
+    /**
+      * @desc: 设置沉浸栏
+     *  @param :context activiyt
+      * @author：Arison on 2016/11/18
+      */
+    public static void setSystemBarTint(Context ct){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //透明状态栏  
+            ((Activity)ct).getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            //透明导航栏  
+            ((Activity)ct).getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
+        SystemBarTintManager tintManager = new SystemBarTintManager((Activity)ct);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setNavigationBarTintEnabled(true);
+        tintManager.setTintColor(Color.parseColor("#3F51B5"));
     }
 }
