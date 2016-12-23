@@ -225,7 +225,7 @@ public class IndexActivity extends AppCompatActivity {
                 break;
             case R.id.action_export_data:
                 String msg = SDCardUtils.exprotDataBase(this);
-                ToastUtils.showLong(getApplicationContext(), msg);
+                ToastUtils.showLongToast(this,msg);
                 break;
 
         }
@@ -371,7 +371,7 @@ public class IndexActivity extends AppCompatActivity {
 
     @OnClick(R.id.settingsbutton)
     void submit() {
-        ToastUtils.show(IndexActivity.this, "设置", 3000);
+//        ToastUtils.show(IndexActivity.this, "设置", 3000);
     }
 
 

@@ -28,7 +28,6 @@ import com.news.util.base.ApiUtils;
 import com.news.util.base.KeyBoardUtils;
 import com.news.util.base.StringUtils;
 import com.news.util.base.SystemUtils;
-import com.news.util.base.ToastUtils;
 import com.news.util.net.HttpDataCallBack;
 import com.news.util.net.NetUtils;
 import com.news.widget.recyclerView.EndlessRecyclerOnScrollListener;
@@ -268,7 +267,7 @@ public class MainSearchActivity extends BaseActivity {
             }
             adapter.notifyDataSetChanged();
         }else{
-            ToastUtils.showLong(ct,"没有您需要的新闻数据！");
+            //ToastUtils.showLong(ct,"没有您需要的新闻数据！");
         }
     }
 
